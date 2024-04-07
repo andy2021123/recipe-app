@@ -1,0 +1,12 @@
+[
+  {
+    "domain": "thewholesomedish",
+    "ingredient_element": ".wprm-recipe-ingredient",
+    "instruction_element": ".wprm-recipe-instruction-text"
+  },
+  {
+    "domain": "food",
+    "ingredient_element": "li[style*='display: contents']",
+    "instruction_element": ".direction"
+  }
+]
