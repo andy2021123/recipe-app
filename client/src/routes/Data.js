@@ -14,7 +14,9 @@ export default function Data() {
 				}}
 			>
         <Title>Data</Title>
-				<Typography>{data ? JSON.stringify(data) : (loading ? 'Loading...' : (error && error))}</Typography>
+				{loading && <Typography>Loading...</Typography>}
+				{error && <Typography>{error}</Typography>}
+				{data && <pre>{JSON.stringify(data, null, 2)}</pre>}
       </Paper>
 	)
 }

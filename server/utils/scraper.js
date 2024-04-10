@@ -8,24 +8,31 @@ export async function scrapeWebsite(url) {
   const { data: html } = await axios.get(url)
   const $ = cheerio.load(html)
 
-  const { ingredientElement, instructionElement } = getDomainElements(url)
+  const { 
+    ingredient_include, 
+    instruction_include, 
+  } = getDomainElements(url)
 
-  const ingredients = $(ingredientElement).map((_, ingredient) => {
-    const raw = $(ingredient).text()
-    return raw.trim().replace(/\s+/g, ' ')
+  const ingredients = $(ingredient_include).map((_, ingredient) => {
+    let raw = $(ingredient).text()
+    return raw.trim()
+      .replace(/\s+/g, ' ')
+      .replace(/▢ /g, '')
   }
   ).get()
   console.log(ingredients)
 
-  const instructions = $(instructionElement).map((index, instruction) => ({
-    index: index + 1,
-    text: $(instruction).text()
+  const instructions = $(instruction_include).map((_, instruction) => {
+    let raw = $(instruction).text()
+    return raw.trim()
   }
-  )).get()
+  ).get()
   console.log(instructions)
+
+  return { ingredients: ingredients, instructions: instructions }
 }
 
-async function prettyPrintHTML(html) {
+async function prettyPrintHTML(html) { // for dev and debug purposes
   const formattedHtml = await prettier.format(html, { parser: 'html' })
   console.log(formattedHtml)
 }
@@ -36,12 +43,10 @@ function getDomainElements(url) {
   for (let i = 0; i < elements.length; i++) {
     if (elements[i].domain === domain) {
       return {
-        ingredientElement: elements[i].ingredient_element,
-        instructionElement: elements[i].instruction_element
-      };
+        ingredient_include: elements[i].ingredient_include, 
+        instruction_include: elements[i].instruction_include,
+      }
     }
   }
   return null
-
-// TODO: add exception elements as well (there is probably a way to query specific elements and then remove elements that fit other parameters)
 }
