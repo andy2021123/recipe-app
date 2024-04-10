@@ -1,5 +1,6 @@
 import express from 'express'
 import { getUsers } from '../database/users.js'
+import recipes from './recipes.js'
 
 const router = express.Router()
 
@@ -14,6 +15,6 @@ router.get('/users', async (req, res) => { // demonstrate database usage
   res.send(users)
 })
 
-// router.use('/category', category) // can split into separate files for organization
+router.use('/recipes', recipes) // can split into separate files for organization
 
 export default router
