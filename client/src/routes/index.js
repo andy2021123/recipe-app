@@ -5,6 +5,7 @@ import NoPage from "./NoPage"
 import Data from "./Data"
 import Recipes from "./Recipes"
 import Recipe from "./Recipes/Recipe"
+import AddRecipe from "./Recipes/AddRecipe"
 
 const AppRoutes = () => {
   return (
@@ -15,6 +16,7 @@ const AppRoutes = () => {
           <Route path="/recipes">
             <Route index element={<Recipes />} exact/>
             <Route element={<Recipe />} path="/recipes/:id" />
+            <Route element={<AddRecipe />} path="/recipes/add" />
           </Route>
           <Route element={<Data />} path="/data" exact />
           <Route element={<NoPage />} path="*" />
