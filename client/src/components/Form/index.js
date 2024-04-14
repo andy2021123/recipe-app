@@ -1,38 +1,38 @@
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Button from './Button'
 import DynamicFields from './DynamicFields'
 import Input from './Input'
+import Select from './Select'
 
 const FormMethodsContext = createContext()
 
-const FormMethodsProvider = ({ children }) => {
-  const contextValue = useForm()
+function FormMethodsProvider({ defaultValues, children }) {
+  const contextValue = useForm({ defaultValues })
 
   return (
     <FormMethodsContext.Provider value={contextValue}>
       {children}
     </FormMethodsContext.Provider>
-  );
+  )
 }
 
-const useFormMethods = () => {
+function useFormMethods() {
   return useContext(FormMethodsContext)
 }
 
-function FormBox({ children, onSubmit, ...rest }) {
+function FormBox({ children, spacing, onSubmit, ...rest }) {
   const { handleSubmit } = useFormMethods()
 
   return (
     <Box
       component="form"
       onSubmit={handleSubmit(onSubmit)}
-      noValidate
       {...rest}
     >
-      <Grid container spacing={3} alignContent={'center'} justifyContent={'center'} justifyItems={'center'}>
+      <Grid container spacing={spacing || 1} justifyContent={'center'}>
         {children}
       </Grid>
     </Box>
@@ -41,10 +41,10 @@ function FormBox({ children, onSubmit, ...rest }) {
 
 function Form({ defaultValues, children, ...rest }) {
   return (
-    <FormMethodsProvider>
+    <FormMethodsProvider defaultValues={defaultValues}>
       <FormBox {...rest}>{children}</FormBox>
     </FormMethodsProvider>
   )
 }
 
-export { useFormMethods, Form, Input, DynamicFields, Button }
+export { useFormMethods, Form, Input, DynamicFields, Button, Select }

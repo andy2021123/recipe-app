@@ -6,7 +6,7 @@ const router = express.Router()
 // routes
 router.get('/', async (req, res) => {
   sharp('images/perfect_burger.png')
-    .resize(100, 100)
+    .resize(200, 200)
     .toBuffer()
     .then(buffer => {
       const image = buffer.toString('base64')
