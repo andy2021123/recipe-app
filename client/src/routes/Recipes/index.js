@@ -1,4 +1,4 @@
-import { Paper } from '@mui/material'
+import { Paper, Container } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import EmptyImage from 'components/EmptyImage'
 import Title from 'components/Title'
@@ -29,13 +29,18 @@ function RecipeItem(props) {
 
   return (
     <ListItem>
-      <ListItemButton href={`recipes/${id}`}>
+      <ListItemButton href={`/recipes/${id}`}>
         <ListItemAvatar>
-          <Avatar 
-            variant='rounded'
-            src={`data:image/png;base64,${image}`}
-            alt={<EmptyImage width={width} />}
-          />
+          {image ? (
+            <Avatar
+              variant='rounded'
+              src={`data:image/png;base64,${image}`}
+            />
+          ) : (
+            <Avatar variant='rounded'>
+              <EmptyImage width={width} />
+            </Avatar>
+          )}
         </ListItemAvatar>
         <ListItemText primary={name} secondary={description} />
       </ListItemButton>
@@ -47,16 +52,11 @@ export default function Recipes() {
   const { data, loading, error } = useAxios('/recipes', 'get')
 
   return (
-    <Paper
-      sx={{
-        p: 2,
-        my: 2
-      }}
-    >
+    <Container component={Paper} sx={{ p: 2 }}>
       <Title>Recipes</Title>
       {loading && <Typography>Loading...</Typography>}
       {error && <Typography>{error}</Typography>}
       {data && <RecipeList recipes={data} />}
-    </Paper>
+    </Container>
   )
 }

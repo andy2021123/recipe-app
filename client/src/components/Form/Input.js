@@ -10,31 +10,29 @@ const FormGrid = styled(Grid)(() => ({
   flexDirection: 'column',
 }))
 
-function InnerInput({ name, label, required, placeholder, ...rest }) {
+function InnerInput({ name, ...rest }) {
   const { register } = useFormMethods()
 
   return (
     <TextField
-      required={required}
       name={name}
-      placeholder={placeholder || name}
-      fullWidth
       {...register(name)}
+      fullWidth
       {...rest}
     />
   )
 }
 
-export default function Input({ variant, label, required, ...rest }) {
+export default function Input({ variant, label, placeholder, required, xs, sm, md, lg, ...rest }) {
   return (
-    <FormGrid item sx={12}>
+    <FormGrid item xs={xs || 12} sm={sm} md={md} lg={lg}>
       {variant !== 'compact' && label ? (
         <Fragment>
           <FormLabel required={required}>{label}</FormLabel>
-          <InnerInput required={required} {...rest} />
+          <InnerInput required={required} placeholder={placeholder || label} {...rest} />
         </Fragment>
       ) : (
-        <InnerInput required={required} {...rest} />
+        <InnerInput required={required} placeholder={placeholder || label} {...rest} />
       )}
     </FormGrid>
   )

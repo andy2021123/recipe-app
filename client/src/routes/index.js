@@ -15,8 +15,8 @@ const AppRoutes = () => {
           <Route element={<Home />} path="/" exact />
           <Route path="/recipes">
             <Route index element={<Recipes />} exact/>
-            <Route element={<Recipe />} path="/recipes/:id" />
-            <Route element={<AddRecipe />} path="/recipes/add" />
+            <Route element={<Recipe />} path=":id" />
+            <Route element={<AddRecipe />} path="add" />
           </Route>
           <Route element={<Data />} path="/data" exact />
           <Route element={<NoPage />} path="*" />
