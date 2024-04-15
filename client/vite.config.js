@@ -19,12 +19,13 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      assets: "/src/assets",
       components: "/src/components",
       hooks: "/src/hooks",
       layout: "/src/layout",
       routes: "/src/routes",
       style: "/src/style",
-      utils: "/src/utils",
+      utils: "/src/utils"
     }
   }
 })

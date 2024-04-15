@@ -1,11 +1,11 @@
 import { Route, BrowserRouter, Routes } from "react-router-dom"
-import Layout from "../layout"
+import Layout from "layout"
 import Home from "./Home"
 import NoPage from "./NoPage"
-import Data from "./Data"
 import Recipes from "./Recipes"
-import Recipe from "./Recipes/Recipe"
-import AddRecipe from "./Recipes/AddRecipe"
+import Recipe from "./Recipe"
+import AddRecipe from "./AddRecipe"
+import CategoryRecipes from "./Recipes/CategoryRecipes"
 
 const AppRoutes = () => {
   return (
@@ -15,10 +15,10 @@ const AppRoutes = () => {
           <Route element={<Home />} path="/" exact />
           <Route path="/recipes">
             <Route index element={<Recipes />} exact/>
-            <Route element={<Recipe />} path=":id" />
-            <Route element={<AddRecipe />} path="add" />
+            <Route element={<CategoryRecipes />} path=":category"/>
           </Route>
-          <Route element={<Data />} path="/data" exact />
+          <Route element={<AddRecipe />} path="add-recipe" />
+          <Route element={<Recipe />} path="/:id" />
           <Route element={<NoPage />} path="*" />
         </Route>
       </Routes>

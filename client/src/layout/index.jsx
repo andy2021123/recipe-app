@@ -1,15 +1,8 @@
 import {
-  Fragment,
-  // useEffect,
-  // useState
-} from 'react'
-import { 
-  Link, 
-  Outlet, 
-  useLocation,
-  matchPath
+  Link,
+  Outlet
 } from "react-router-dom"
-import { Container } from '@mui/material'
+import { useMediaQuery, useTheme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
@@ -18,69 +11,67 @@ import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import AppLogo from 'assets/AppLogo'
+import useRouteMatch from 'hooks/useRouteMatch'
 
-
-function useRouteMatch(patterns) {
-  const { pathname } = useLocation()
-
-  for (let i = 0; i < patterns.length; i += 1) {
-    const pattern = patterns[i]
-    const possibleMatch = matchPath(pattern, pathname)
-    if (possibleMatch !== null) {
-      return possibleMatch
-    }
-  }
-
-  return null
-}
 
 function NavTabs() {
-  const routeMatch = useRouteMatch(["/", "/recipes/add", "/recipes"])
+  const routeMatch = useRouteMatch(["/", "/add-recipe", "/recipes"])
   const currentTab = routeMatch?.pattern?.path || "/recipes"
 
   return (
     <Tabs value={currentTab} textColor='inherit'>
       <Tab label="Home" value="/" to="/" component={Link} />
-      <Tab label="Add Recipe" value="/recipes/add" to="/recipes/add" component={Link} />
+      <Tab label="Add Recipe" value="/add-recipe" to="/add-recipe" component={Link} />
       <Tab label="All Recipes" value="/recipes" to="/recipes" component={Link} />
     </Tabs>
   )
 }
 
-function TopBar({ children }) {
+function MobileToolbar() {
   return (
-    <Box sx={{ flexGrow: 1, pb: 2 }}>
-      <AppBar componenet="nav">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Recipe App
-          </Typography>
-          <NavTabs />
-        </Toolbar>
-      </AppBar>
-      <Container maxWidth="lg" sx={{ pt: 10 }}>
-        {children}
-      </Container>
-    </Box>
+    <Toolbar>
+      <IconButton
+        size="large"
+        edge="start"
+        color="inherit"
+        aria-label="menu"
+        sx={{ mr: 2 }}
+      >
+        <MenuIcon />
+      </IconButton>
+      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}/>
+      <AppLogo />
+      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}/>
+    </Toolbar>
+  )
+}
+
+function DesktopToolbar() {
+  return (
+    <Toolbar>
+      <AppLogo />
+      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}/>
+      <NavTabs />
+    </Toolbar>
   )
 }
 
 
 export default function Layout() {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'), {
+    defaultMatches: true
+  })
+
   return (
-    <Fragment>
-      <TopBar>
+    <Box sx={{ display: 'flex' }}>
+      <AppBar componenet="nav">
+        {isMobile ? <MobileToolbar/> : <DesktopToolbar/>}
+      </AppBar>
+      <Box component="main" sx={{ flexGrow: 1, pt: 10, px: 2 }}>
         <Outlet />
-      </TopBar>
-    </Fragment >
+      </Box>
+    </Box>
   )
 }
