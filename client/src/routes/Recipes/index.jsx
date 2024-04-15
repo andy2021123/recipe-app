@@ -1,50 +1,69 @@
-import { Paper, Container } from '@mui/material'
+import { Box, Paper, Grid, useTheme, Skeleton, CardActionArea } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import EmptyImage from 'components/EmptyImage'
-import Title from 'components/Title'
 import useAxios from 'hooks/useAxios'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import Avatar from '@mui/material/Avatar'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CardMedia from '@mui/material/CardMedia'
+import Search from 'components/Search'
+
+
+function TitleBlock() {
+  const theme = useTheme()
+
+  return (
+    <Paper
+      sx={{
+        bgcolor: theme.palette.secondary.light,
+        color: theme.palette.common.white,
+        p: 2
+      }}
+    >
+      <Typography variant='h5' fontWeight='bold' sx={{ pb: 1 }}>All Recipes</Typography>
+      <Search />
+    </Paper>
+  )
+}
+
+function RecipeItem(props) {
+  const { id, name, image, category } = props.children
+
+  return (
+    <Grid item xs={6} md={4} lg={3}>
+      <Card>
+        <CardActionArea>
+          {image ? (
+            <CardMedia
+              component="img"
+              sx={{ height: 200 }}
+              src={`data:image/png;base64,${image}`}
+            />
+          ) : (
+            <Skeleton animation={false} variant="rectangular" height={200} />
+          )}
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              {name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {category}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </Card>
+    </Grid>
+  )
+}
 
 function RecipeList(props) {
   const { recipes } = props
 
   return (
-    <List>
+    <Grid container spacing={2} pt={2}>
       {recipes && recipes.map((recipe) => (
         <RecipeItem key={recipe.id}>{recipe}</RecipeItem>
       )
       )}
-    </List>
-  )
-}
-
-function RecipeItem(props) {
-  const { id, name, image, description } = props.children
-  const width = 100
-
-  return (
-    <ListItem>
-      <ListItemButton href={`/recipes/${id}`}>
-        <ListItemAvatar>
-          {image ? (
-            <Avatar
-              variant='rounded'
-              src={`data:image/png;base64,${image}`}
-            />
-          ) : (
-            <Avatar variant='rounded'>
-              <EmptyImage width={width} />
-            </Avatar>
-          )}
-        </ListItemAvatar>
-        <ListItemText primary={name} secondary={description} />
-      </ListItemButton>
-    </ListItem>
+    </Grid>
   )
 }
 
@@ -52,11 +71,11 @@ export default function Recipes() {
   const { data, loading, error } = useAxios('/recipes', 'get')
 
   return (
-    <Container component={Paper} sx={{ p: 2 }}>
-      <Title>Recipes</Title>
+    <Box>
+      <TitleBlock />
       {loading && <Typography>Loading...</Typography>}
       {error && <Typography>{error}</Typography>}
       {data && <RecipeList recipes={data} />}
-    </Container>
+    </Box>
   )
 }

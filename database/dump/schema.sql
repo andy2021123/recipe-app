@@ -11,13 +11,33 @@ SET search_path = public, pg_catalog;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; -- Ensure uuid-ossp extension is available
 
-CREATE TABLE public.users (
+CREATE TABLE public.recipes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  username VARCHAR(50) NOT NULL,
-  email VARCHAR(100) NOT NULL
+  name VARCHAR(255) NOT NULL,
+  category VARCHAR(63) NOT NULL,
+  description VARCHAR(255) NOT NULL,
+  keywords VARCHAR(255),
+  notes VARCHAR(255),
+  image VARCHAR(255),
+  cook_time smallint,
+  prep_time smallint
+);
+
+CREATE TABLE public.ingredients (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  recipe_id UUID,
+  name VARCHAR(255) NOT NULL,
+  FOREIGN KEY (recipe_id) REFERENCES recipes(id)
+);
+
+CREATE TABLE public.ingredients (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  recipe_id UUID,
+  index smallint NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  FOREIGN KEY (recipe_id) REFERENCES recipes(id)
 );
 
 -- example values
-INSERT INTO public.users (id, username, email) VALUES
-(uuid_generate_v4(), 'user1', 'user1@example.com'),
-(uuid_generate_v4(), 'user2', 'user2@example.com');
+INSERT INTO public.recipes (id, name, category, description) VALUES
+(uuid_generate_v4(), 'The Perfect Burger', 'user1@example.com');
