@@ -41,7 +41,7 @@ function RecipeItem(props) {
             <Skeleton animation={false} variant="rectangular" height={200} />
           )}
           <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
+            <Typography gutterBottom variant="h6" component="div">
               {name}
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -68,7 +68,7 @@ function RecipeList(props) {
 }
 
 export default function Recipes() {
-  const { data, loading, error } = useAxios('/recipes', 'get')
+  const { data, loading, error } = useAxios('/recipe/list', 'get')
 
   return (
     <Box>

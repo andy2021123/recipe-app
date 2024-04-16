@@ -14,11 +14,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp"; -- Ensure uuid-ossp extension is ava
 CREATE TABLE public.recipes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(255) NOT NULL,
+  name_url VARCHAR(255) NOT NULL,
   category VARCHAR(63) NOT NULL,
   description VARCHAR(255) NOT NULL,
   keywords VARCHAR(255),
   notes VARCHAR(255),
-  image VARCHAR(255),
   cook_time smallint,
   prep_time smallint
 );
@@ -30,7 +30,7 @@ CREATE TABLE public.ingredients (
   FOREIGN KEY (recipe_id) REFERENCES recipes(id)
 );
 
-CREATE TABLE public.ingredients (
+CREATE TABLE public.instructions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   recipe_id UUID,
   index smallint NOT NULL,
@@ -39,5 +39,9 @@ CREATE TABLE public.ingredients (
 );
 
 -- example values
-INSERT INTO public.recipes (id, name, category, description) VALUES
-(uuid_generate_v4(), 'The Perfect Burger', 'user1@example.com');
+INSERT INTO public.recipes (id, name, name_url, category, description) VALUES
+(uuid_generate_v4(), 'The Perfect Burger', 'the-perfect-burger', 'Entree', 'Yummy burger'),
+(uuid_generate_v4(), 'The Big Burger', 'the-big-burger', 'Entree', 'burger'),
+(uuid_generate_v4(), 'The Worcestershire Burger', 'the-worcestershire-burger', 'Entree', 'Yummy');
+
+INSERT INTO public.recipes

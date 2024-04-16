@@ -6,7 +6,7 @@ import useAxios from 'hooks/useAxios'
 
 export default function Recipe() {
 	const { id } = useParams()
-	const { data, loading, error } = useAxios(`/recipes/${id}`, 'get')
+	const { data, loading, error } = useAxios(`/recipe/${id}`, 'get')
 
 	return (
 		<Container component={Paper} sx={{ p: 2 }}>

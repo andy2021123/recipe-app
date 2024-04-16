@@ -3,7 +3,7 @@ import {
   Outlet
 } from "react-router-dom"
 import { useMediaQuery, useTheme } from '@mui/material'
-import Box from '@mui/material/Box'
+import { Box, Container } from '@mui/material'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import AppBar from '@mui/material/AppBar'
@@ -40,9 +40,9 @@ function MobileToolbar() {
       >
         <MenuIcon />
       </IconButton>
-      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}/>
+      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
       <AppLogo />
-      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}/>
+      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
     </Toolbar>
   )
 }
@@ -51,7 +51,7 @@ function DesktopToolbar() {
   return (
     <Toolbar>
       <AppLogo />
-      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}/>
+      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
       <NavTabs />
     </Toolbar>
   )
@@ -67,10 +67,18 @@ export default function Layout() {
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar componenet="nav">
-        {isMobile ? <MobileToolbar/> : <DesktopToolbar/>}
+        {isMobile ? <MobileToolbar /> : <DesktopToolbar />}
       </AppBar>
-      <Box component="main" sx={{ flexGrow: 1, pt: 10, px: 2 }}>
-        <Outlet />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+        }}
+      >
+        <Toolbar />
+        <Container maxWidth="lg" sx={{ mt: 3, mb: 3 }}>
+          <Outlet />
+        </Container>
       </Box>
     </Box>
   )
