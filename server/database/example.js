@@ -1,5 +1,7 @@
 import pool from "./index.js"
 
+// THIS IS JUST AN EXAMPLE FILE
+
 // User Related Queries
 export async function getUsers() {
   const { rows } = await pool.query(`

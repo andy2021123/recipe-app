@@ -1,6 +1,6 @@
 import express from 'express'
-import { getUsers } from '../database/users.js'
-import recipes from './recipes.js'
+// import { getUsers } from '../database/example.js'
+import recipe from './recipe.js'
 
 const router = express.Router()
 
@@ -9,12 +9,12 @@ router.get('/hello', async (req, res) => {
   res.send({message: 'hello world!'})
 })
 
-router.get('/users', async (req, res) => { // demonstrate database usage
-  const users = await getUsers()
-  console.log(users)
-  res.send(users)
-})
+// router.get('/users', async (req, res) => { // demonstrate database usage
+//   const users = await getUsers()
+//   console.log(users)
+//   res.send(users)
+// })
 
-router.use('/recipes', recipes) // can split into separate files for organization
+router.use('/recipe', recipe) // can split into separate files for organization
 
 export default router
