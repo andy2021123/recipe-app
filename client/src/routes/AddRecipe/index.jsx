@@ -1,16 +1,18 @@
 import {
   Fragment,
+  useEffect,
   useState,
-  // useEffect, 
-  // useState 
 } from 'react'
 // import { useNavigate } from "react-router-dom"
 // import api from 'hooks/useAxios/api'
-import Container from '@mui/material/Container'
-import { Box, Grid, Modal, Paper, Typography } from '@mui/material'
+import { Alert, Box, CircularProgress, Grid, Modal, Paper, Typography } from '@mui/material'
 import { Form, Input, DynamicFields, Button, Select, useFormMethods } from 'components/Form'
 import Title from 'components/Title'
 import CropImage from 'routes/AddRecipe/CropImage'
+import api from 'hooks/useAxios/api'
+import FormData from 'form-data'
+import axios from 'axios'
+
 
 const style = {
   position: 'absolute',
@@ -21,7 +23,6 @@ const style = {
   height: 400,
   bgcolor: 'background.paper',
   boxShadow: 24,
-  p: 4,
 }
 
 function UrlForm() {
@@ -46,7 +47,7 @@ function UrlForm() {
   )
 }
 
-function ImageInput() {
+function ImageInput({ setBlob }) {
   const [open, setOpen] = useState(false)
   const [image, setImage] = useState(null)
 
@@ -68,9 +69,9 @@ function ImageInput() {
       <Grid item xs={12}>
         <input type="file" name="image" accept="image/*" label="Image" onChange={onSelectFile} />
       </Grid>
-      <Modal open={open}> 
+      <Modal open={open}>
         <Box sx={style}>
-          <CropImage name="image" image={image} setOpen={setOpen}/>
+          <CropImage name="image" image={image} setOpen={setOpen} setImage={setBlob}/>
         </Box>
       </Modal>
     </Fragment>
@@ -78,19 +79,50 @@ function ImageInput() {
 }
 
 function RecipeForm() {
+  const [blob, setBlob] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState(false)
 
-  const onSubmit = (data) => {
+  const handleSubmit = (data) => {
     console.log(data)
+    setSuccess(false)
+    setError(false)
+
+    setLoading(true)
+    api.post('/recipe', data)
+      .then((res) => {
+        submitImage(res.data)
+      })
+      .catch(() => setError({ message: 'no data was successfully uploaded' }))
+      .finally(() => setLoading(false))
   }
+
+  const submitImage = (id) => {
+    const data = new FormData()
+    data.append("file", blob, blob.name)    
+
+    axios.post(`/api/recipe/image?id=${id}`, data, {
+      headers: {
+        'Content-Type': `multipart/form-data;`,
+      }
+    })
+      .then(() => setSuccess(true))
+      .catch(() => setError({ message: 'image was not successfully uploaded, but data was' }))
+      .finally(() => setLoading(false))
+  } 
 
   return (
     <Form
       spacing={2}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       defaultValues={{ ingredients: [""], instructions: [""] }}
     >
+      {success && <Alert severity="success">Data Successfully Submitted</Alert>}
+      {error && <Alert severity="error">{error.message}</Alert>}
+      {loading && <CircularProgress/>}
       <UrlForm />
-      <ImageInput />
+      <ImageInput setBlob={setBlob}/>
       <Grid item xs={12}>
         <Typography variant='h5' color='primary'>Description</Typography>
       </Grid>
