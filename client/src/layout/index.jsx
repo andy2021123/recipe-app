@@ -30,7 +30,7 @@ function NavTabs() {
 
 function MobileToolbar() {
   return (
-    <Toolbar>
+    <Toolbar disableGutters sx={{ px: 2 }}>
       <IconButton
         size="large"
         edge="start"
@@ -49,7 +49,7 @@ function MobileToolbar() {
 
 function DesktopToolbar() {
   return (
-    <Toolbar>
+    <Toolbar disableGutters sx={{ px: 2 }}>
       <AppLogo />
       <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
       <NavTabs />
@@ -67,7 +67,9 @@ export default function Layout() {
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar componenet="nav">
-        {isMobile ? <MobileToolbar /> : <DesktopToolbar />}
+        <Container disableGutters maxWidth="lg">
+          {isMobile ? <MobileToolbar /> : <DesktopToolbar />}
+        </Container>
       </AppBar>
       <Box
         component="main"
@@ -76,9 +78,27 @@ export default function Layout() {
         }}
       >
         <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 3, mb: 3 }}>
+        <Container disableGutters maxWidth="lg" sx={{ p: 2, minHeight: 1200 }}>
           <Outlet />
         </Container>
+        <Box
+          sx={{
+            bgcolor: theme.palette.secondary.main
+          }}
+        >
+          <Container
+            disableGutters
+            maxWidth="lg"
+            sx={{
+              mt: 2,
+              p: 2,
+              height: 200,
+              color: theme.palette.common.white
+            }}
+          >
+            <Typography variant="h5" pt={2}>Contact Information</Typography>
+          </Container>
+        </Box>
       </Box>
     </Box>
   )

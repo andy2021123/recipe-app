@@ -25,7 +25,7 @@ function TitleBlock() {
 }
 
 function RecipeItem(props) {
-  const { id, name, image, category } = props.children
+  const { id, name, image, category, description } = props.children
 
   return (
     <Grid item xs={6} md={4} lg={3}>
@@ -40,12 +40,14 @@ function RecipeItem(props) {
           ) : (
             <Skeleton animation={false} variant="rectangular" height={200} />
           )}
-          <CardContent>
-            <Typography gutterBottom variant="h6" component="div">
+          <CardContent
+            sx={{ height: 100 }}
+          >
+            <Typography gutterBottom variant="h6" component="div" noWrap>
               {name}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {category}
+            <Typography paragraph color="text.secondary" noWrap>
+              {description}
             </Typography>
           </CardContent>
         </CardActionArea>

@@ -3,13 +3,13 @@ import Cropper from 'react-easy-crop'
 import { Button } from 'components/Form'
 import getCroppedImg from './getCroppedImg'
 import { useFormMethods } from 'components/Form'
+import { Box } from '@mui/material'
 
-export default function CropImage({ name, image, setOpen }) {
+export default function CropImage({ image, setOpen, setImage }) {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
-  const { setValue } = useFormMethods()
 
   const onCropComplete = (croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels)
@@ -23,7 +23,7 @@ export default function CropImage({ name, image, setOpen }) {
         rotation
       )
       console.log('done', { croppedImage })
-      setValue(name, croppedImage)
+      setImage(croppedImage)
       setOpen(false)
     } catch (e) {
       console.error(e)
@@ -33,24 +33,28 @@ export default function CropImage({ name, image, setOpen }) {
 
   return (
     <Fragment>
-      <Cropper
-        image={image}
-        crop={crop}
-        rotation={rotation}
-        zoom={zoom}
-        aspect={1}
-        onCropChange={setCrop}
-        onRotationChange={setRotation}
-        onCropComplete={onCropComplete}
-        onZoomChange={setZoom}
-      />
-      <Button
-        onClick={saveCroppedImage}
-        variant="contained"
-        color="primary"
-      >
-        Save Result
-      </Button>
+      <Box sx={{ height: 340 }}>
+        <Cropper
+          image={image}
+          crop={crop}
+          rotation={rotation}
+          zoom={zoom}
+          aspect={1}
+          onCropChange={setCrop}
+          onRotationChange={setRotation}
+          onCropComplete={onCropComplete}
+          onZoomChange={setZoom}
+        />
+      </Box>
+      <Box sx={{ px: 5 }}>
+        <Button
+          onClick={saveCroppedImage}
+          variant="contained"
+          color="primary"
+        >
+          Save Result
+        </Button>
+      </Box>
     </Fragment>
 
   )
