@@ -21,6 +21,7 @@ export default defineConfig({
     alias: {
       assets: "/src/assets",
       components: "/src/components",
+      features: "/src/features",
       hooks: "/src/hooks",
       layout: "/src/layout",
       routes: "/src/routes",
