@@ -1,3 +1,5 @@
+import FormData from 'form-data'
+
 export const createImage = (url) =>
   new Promise((resolve, reject) => {
     const image = new Image()
@@ -28,7 +30,7 @@ export function rotateSize(width, height, rotation) {
 /**
  * This function was adapted from the one in the ReadMe of https://github.com/DominicTobias/react-image-crop
  */
-export default async function getCroppedImg(
+export async function getCroppedImg(
   imageSrc,
   pixelCrop,
   rotation = 0,
@@ -88,18 +90,19 @@ export default async function getCroppedImg(
     pixelCrop.width,
     pixelCrop.height
   )
-
-  // As Base64 string
-  // return croppedCanvas.toDataURL('image/png')
-
-  // As a blob
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     croppedCanvas.toBlob((blob) => {
-      resolve(new File([blob], 'image.png', {type: blob.type}))
-    }, 'image/png')
+      const formData = new FormData()
+      formData.append('file', blob)
+
+      resolve(formData)
+    })
   })
 
   // croppedCanvas.toBlob((blob) => {
-  //   return new File([blob], blob.name, {type: blob.type})
-  // })
+  //   const formData = new FormData()
+  //   formData.append('file', blob)
+
+  //   return 'test'
+  // }, 'image/png')
 }

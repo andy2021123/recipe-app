@@ -1,17 +1,15 @@
 import {
   Fragment,
-  useEffect,
-  useState,
+  useState
 } from 'react'
 // import { useNavigate } from "react-router-dom"
 // import api from 'hooks/useAxios/api'
 import { Alert, Box, CircularProgress, Grid, Modal, Paper, Typography } from '@mui/material'
 import { Form, Input, DynamicFields, Button, Select, useFormMethods } from 'components/Form'
 import Title from 'components/Title'
-import CropImage from 'routes/AddRecipe/CropImage'
 import api from 'hooks/useAxios/api'
-import FormData from 'form-data'
 import axios from 'axios'
+import ImageCropper from 'features/ImageCropper'
 
 
 const style = {
@@ -47,7 +45,7 @@ function UrlForm() {
   )
 }
 
-function ImageInput({ setBlob }) {
+function ImageInput({ setImageFile }) {
   const [open, setOpen] = useState(false)
   const [image, setImage] = useState(null)
 
@@ -71,7 +69,7 @@ function ImageInput({ setBlob }) {
       </Grid>
       <Modal open={open}>
         <Box sx={style}>
-          <CropImage name="image" image={image} setOpen={setOpen} setImage={setBlob}/>
+          <ImageCropper name="image" image={image} setOpen={setOpen} setImageFile={setImageFile}/>
         </Box>
       </Modal>
     </Fragment>
@@ -79,7 +77,7 @@ function ImageInput({ setBlob }) {
 }
 
 function RecipeForm() {
-  const [blob, setBlob] = useState(null)
+  const [imageFile, setImageFile] = useState(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
@@ -99,12 +97,9 @@ function RecipeForm() {
   }
 
   const submitImage = (id) => {
-    const data = new FormData()
-    data.append("file", blob, blob.name)    
-
-    axios.post(`/api/recipe/image?id=${id}`, data, {
+    axios.post(`/api/recipe/image?id=${id}`, imageFile, {
       headers: {
-        'Content-Type': `multipart/form-data;`,
+        'Content-Type': 'multipart/form-data;',
       }
     })
       .then(() => setSuccess(true))
@@ -122,7 +117,7 @@ function RecipeForm() {
       {error && <Alert severity="error">{error.message}</Alert>}
       {loading && <CircularProgress/>}
       <UrlForm />
-      <ImageInput setBlob={setBlob}/>
+      <ImageInput setImageFile={setImageFile}/>
       <Grid item xs={12}>
         <Typography variant='h5' color='primary'>Description</Typography>
       </Grid>

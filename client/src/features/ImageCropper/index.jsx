@@ -1,11 +1,10 @@
 import React, { useState, Fragment } from 'react'
 import Cropper from 'react-easy-crop'
 import { Button } from 'components/Form'
-import getCroppedImg from './getCroppedImg'
-import { useFormMethods } from 'components/Form'
+import { getCroppedImg } from './utils'
 import { Box } from '@mui/material'
 
-export default function CropImage({ image, setOpen, setImage }) {
+export default function ImageCropper({ image, setOpen, setImageFile }) {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(1)
@@ -22,8 +21,8 @@ export default function CropImage({ image, setOpen, setImage }) {
         croppedAreaPixels,
         rotation
       )
-      console.log('done', { croppedImage })
-      setImage(croppedImage)
+      console.log(croppedImage)
+      setImageFile(croppedImage)
       setOpen(false)
     } catch (e) {
       console.error(e)

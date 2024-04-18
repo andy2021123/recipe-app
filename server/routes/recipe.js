@@ -1,6 +1,9 @@
 import express from 'express'
 import { addRecipe, getRecipes } from '../database/recipe.js'
 import { loadImage, saveImage } from '../utils/image.js'
+import fs from 'node:fs'
+import multer from 'multer'
+const upload = multer({ dest: 'images/' })
 
 const router = express.Router()
 
@@ -55,10 +58,10 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.post('/image', async (req, res) => {
+router.post('/image', upload.single('file'), async (req, res) => {
   const { id } = req.query 
-  console.log(id)
-  await saveImage(req.image)
+  const { filename } = req.file
+  fs.rename(`images/${filename}`, `images/${id}.png`, (err) => console.log(err))
   res.sendStatus(200)
 })
 
