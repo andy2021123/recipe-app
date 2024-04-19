@@ -95,3 +95,15 @@ services:
     volumes:
       - ./database/pgdata/production:/var/lib/postgresql/data
       - ./database/dump/${DUMP_FILE:-schema.sql}:/docker-entrypoint-initdb.d/dump.sql  
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    hostname: pgadmin

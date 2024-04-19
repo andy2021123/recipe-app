@@ -75,8 +75,8 @@ export async function getCroppedImg(
   }
 
   // Set the size of the cropped canvas
-  croppedCanvas.width = pixelCrop.width
-  croppedCanvas.height = pixelCrop.height
+  croppedCanvas.width = 400
+  croppedCanvas.height = 400
 
   // Draw the cropped image onto the new canvas
   croppedCtx.drawImage(
@@ -87,8 +87,8 @@ export async function getCroppedImg(
     pixelCrop.height,
     0,
     0,
-    pixelCrop.width,
-    pixelCrop.height
+    croppedCanvas.width,
+    croppedCanvas.height,
   )
   return new Promise((resolve) => {
     croppedCanvas.toBlob((blob) => {
