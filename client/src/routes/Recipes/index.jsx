@@ -1,10 +1,13 @@
 import { Box, Paper, Grid, useTheme, Skeleton, CardActionArea } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import useAxios from 'hooks/useAxios'
+import useAxios, { useAxiosImage } from 'hooks/useAxios'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Search from 'components/Search'
+import { useEffect, useState } from 'react'
+import api from 'hooks/useAxios/api'
+import { useNavigate } from 'react-router-dom'
 
 
 function TitleBlock() {
@@ -24,19 +27,26 @@ function TitleBlock() {
   )
 }
 
-function RecipeItem(props) {
-  const { id, name, image, category, description } = props.children
+function RecipeItem({ children: { id, name, category, description } }) {
+  const { image, loading } = useAxiosImage(`/recipe/image/${id}`)
+  const navigate = useNavigate()
+
+  const openRecipe = () => {
+    navigate(`/${id}`)
+  }
 
   return (
     <Grid item xs={6} md={4} lg={3}>
       <Card>
-        <CardActionArea>
+        <CardActionArea onClick={openRecipe}>
           {image ? (
             <CardMedia
               component="img"
               sx={{ height: 200 }}
-              src={`data:image/png;base64,${image}`}
+              src={image}
             />
+          ) : loading ? (
+            <Skeleton variant="rectangular" height={200} />
           ) : (
             <Skeleton animation={false} variant="rectangular" height={200} />
           )}
@@ -61,7 +71,7 @@ function RecipeList(props) {
 
   return (
     <Grid container spacing={2} pt={2}>
-      {recipes && recipes.map((recipe) => (
+      {recipes && recipes.map((recipe, index) => (
         <RecipeItem key={recipe.id}>{recipe}</RecipeItem>
       )
       )}

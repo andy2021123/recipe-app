@@ -35,3 +35,8 @@ dump:
 
 psql:
 	docker exec -it $(environment)-database psql -U $(PG_USER) -d $(PG_DATABASE)
+
+pgadmin:
+	docker compose up pgadmin -d
+	@echo pgAdmin is running.
+	@echo     Local: http://localhost:8000

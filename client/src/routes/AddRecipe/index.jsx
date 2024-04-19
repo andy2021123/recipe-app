@@ -90,7 +90,7 @@ function RecipeForm() {
     setLoading(true)
     api.post('/recipe', data)
       .then((res) => {
-        submitImage(res.data)
+        imageFile ? submitImage(res.data) : setSuccess(true)
       })
       .catch(() => setError({ message: 'no data was successfully uploaded' }))
       .finally(() => setLoading(false))
