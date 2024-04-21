@@ -1,39 +1,38 @@
 import express from 'express'
-import { addRecipe, getRecipe, getRecipes } from '../database/recipe.js'
-// import { loadImage, saveImage } from '../utils/image.js'
+import { addRecipe, getCategoryRecipes, getRecipe, getRecipes } from '../database/recipe.js'
 import fs from 'node:fs'
 import multer from 'multer'
+import { scrapeWebsite } from '../utils/scraper.js'
 const upload = multer({ dest: 'images/' })
 
 const router = express.Router()
 
 // routes
 router.get('/list', async (req, res) => {
-  // get specific data of all recipes from database (make sure to treat the name_url as the id)
   const recipes = await getRecipes()
   res.send(recipes)
 })
 
 router.get('/list/:category', async (req, res) => {
-  // get specific data of all recipes of a specific category (make sure to treat the name_url as the id)
+  const { category } = req.params
 
-  // gather all images (will be its on util)
-  res.sendStatus(200)
+  const recipes = await getCategoryRecipes(category)
+  res.send(recipes)
+})
+
+router.get('/autofill', async (req, res) => {
+  const { url } = req.query
+  console.log(url)
+
+  const recipe = await scrapeWebsite(url)
+  
+  res.send(recipe)
 })
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params
   const recipe = await getRecipe(id)
   res.send(recipe)
-})
-
-router.post('/url', async (req, res) => {
-  // pass the url to the web scraper utility
-
-  // if data was returned, send it to front end
-
-  // if not, send a different response number so front end can give a flash message or something
-  res.sendStatus(200)
 })
 
 // adds recipe to database and returns the name_url (id) of the recipe
@@ -47,7 +46,7 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.get('/image/:id', async (req, res) => {
+router.get('/:id/image', async (req, res) => {
   const { id } = req.params
 
   if (fs.existsSync(`images/${id}.png`)) {
@@ -57,10 +56,14 @@ router.get('/image/:id', async (req, res) => {
   }
 })
 
-router.post('/image', upload.single('file'), async (req, res) => { // maybe should also use params instead of query
-  const { id } = req.query
+router.post('/:id/image', upload.single('file'), async (req, res) => { // maybe should also use params instead of query
+  const { id } = req.params
   const { filename } = req.file
-  fs.rename(`images/${filename}`, `images/${id}.png`, (err) => console.log(err))
+  fs.rename(`images/${filename}`, `images/${id}.png`, (err) => {
+    if (err) {
+      console.log(err)
+    }
+  })
   res.sendStatus(200)
 })
 

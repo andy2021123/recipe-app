@@ -11,8 +11,10 @@ const app = express()
 // middleware 
 app.use(helmet()) // provides useful security headers
 app.use(cookieparser())
-app.use(morgan('dev')) // console logs request information
 app.use(express.json()) 
+app.use(morgan('dev', {
+  skip: (req, res) => req.route.path === '/:id/image' // skips logging image requests
+})) // console logs request information
 
 // basic error handling
 app.use((err, req, res, next) => {

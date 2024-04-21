@@ -34,6 +34,7 @@ export async function getCroppedImg(
   imageSrc,
   pixelCrop,
   rotation = 0,
+  resizeWidth,
   flip = { horizontal: false, vertical: false }
 ) {
   const image = await createImage(imageSrc)
@@ -75,8 +76,8 @@ export async function getCroppedImg(
   }
 
   // Set the size of the cropped canvas
-  croppedCanvas.width = 400
-  croppedCanvas.height = 400
+  croppedCanvas.width = resizeWidth
+  croppedCanvas.height = resizeWidth
 
   // Draw the cropped image onto the new canvas
   croppedCtx.drawImage(
