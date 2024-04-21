@@ -5,7 +5,6 @@ build/
 
 pgdata/
 dump.sql
-development.sql
 production.sql
 
 # FROM VITE REACT
