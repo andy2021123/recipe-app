@@ -11,6 +11,15 @@ export async function getRecipes() {
   return rows
 }
 
+export async function getCategoryRecipes(category) {
+  const { rows } = await pool.query(`
+    SELECT name_url AS id, name, category, description
+    FROM recipes
+    WHERE category = $1
+  `, [category]);
+  return rows
+}
+
 async function getRecipeNames() {
   const { rows } = await pool.query(`
     SELECT name FROM recipes

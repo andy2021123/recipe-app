@@ -34,14 +34,26 @@ CREATE TABLE public.instructions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   recipe_id UUID,
   index smallint NOT NULL,
-  name VARCHAR(255) NOT NULL,
+  name VARCHAR(1000) NOT NULL,
   FOREIGN KEY (recipe_id) REFERENCES recipes(id)
 );
 
--- example values
-INSERT INTO public.recipes (id, name, name_url, category, description) VALUES
-(uuid_generate_v4(), 'The Perfect Burger', 'the-perfect-burger', 'Entree', 'Yummy burger'),
-(uuid_generate_v4(), 'The Big Burger', 'the-big-burger', 'Entree', 'burger'),
-(uuid_generate_v4(), 'The Worcestershire Burger', 'the-worcestershire-burger', 'Entree', 'Yummy');
+CREATE TABLE public.selectors (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  domain VARCHAR(63) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description VARCHAR(255),
+  ingredients VARCHAR(255) NOT NULL,
+  instructions VARCHAR(255) NOT NULL,
+  notes VARCHAR(255),
+  image VARCHAR(255)
+);
 
-INSERT INTO public.recipes
+INSERT INTO public.selectors (domain, name, description, ingredients, instructions) VALUES
+('thewholesomedish', '.entry-title', '.wprm-recipe-summary', '.wprm-recipe-ingredient', '.wprm-recipe-instruction-text'),
+('food', '.svelte-1muv3s8', NULL, 'li[style*="display: contents"]:not(:has(.ingredient-heading))', '.direction'),
+('cookingwithkarli', '.wprm-recipe-name', '.wprm-recipe-summary', '.wprm-recipe-ingredient', '.wprm-recipe-instruction-text');
+
+-- example values
+-- INSERT INTO public.recipes (name, name_url, category, description) VALUES
+-- ('The Perfect Burger', 'the-perfect-burger', 'Entree', 'Yummy burger');

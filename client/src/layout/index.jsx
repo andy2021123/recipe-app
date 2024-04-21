@@ -1,8 +1,8 @@
 import {
-  Link,
-  Outlet
+  Outlet,
+  Link
 } from "react-router-dom"
-import { useMediaQuery, useTheme } from '@mui/material'
+import { Drawer, List, ListItem, useMediaQuery, useTheme } from '@mui/material'
 import { Box, Container } from '@mui/material'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
@@ -13,22 +13,16 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import AppLogo from 'assets/AppLogo'
 import useRouteMatch from 'hooks/useRouteMatch'
-
-
-function NavTabs() {
-  const routeMatch = useRouteMatch(["/", "/add-recipe", "/recipes"])
-  const currentTab = routeMatch?.pattern?.path || "/recipes"
-
-  return (
-    <Tabs value={currentTab} textColor='inherit'>
-      <Tab label="Home" value="/" to="/" component={Link} />
-      <Tab label="Add Recipe" value="/add-recipe" to="/add-recipe" component={Link} />
-      <Tab label="All Recipes" value="/recipes" to="/recipes" component={Link} />
-    </Tabs>
-  )
-}
+import { Fragment, useState } from "react"
+import CloseIcon from '@mui/icons-material/Close'
 
 function MobileToolbar() {
+  const [open, setOpen] = useState(false)
+
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen)
+  }
+
   return (
     <Toolbar disableGutters sx={{ px: 2 }}>
       <IconButton
@@ -36,23 +30,46 @@ function MobileToolbar() {
         edge="start"
         color="inherit"
         aria-label="menu"
+        onClick={toggleDrawer(true)}
         sx={{ mr: 2 }}
       >
         <MenuIcon />
       </IconButton>
+      <Drawer open={open} anchor="top" onClose={toggleDrawer(false)}>
+        <Box sx={{ width: 'auto', p: 3 }} role="presentation">
+          <IconButton
+            onClick={toggleDrawer(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <List disablePadding>
+            <ListItem onClick={toggleDrawer(false)} to="/" component={Link}>Home</ListItem>
+            <ListItem onClick={toggleDrawer(false)} to="/add-recipe" component={Link}>Add Recipe</ListItem>
+            <ListItem onClick={toggleDrawer(false)} to="/recipes" component={Link}>All Recipes</ListItem>
+          </List>
+        </Box>
+      </Drawer>
       <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
-      <AppLogo />
-      <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
+      <AppLogo isMobile={true} />
+      <Typography pl={4} variant="h4" component="div" sx={{ flexGrow: 1 }} />
     </Toolbar>
   )
 }
 
 function DesktopToolbar() {
+  const routeMatch = useRouteMatch(["/", "/add-recipe", "/recipes"])
+  const currentTab = routeMatch?.pattern?.path || "/recipes"
+
   return (
     <Toolbar disableGutters sx={{ px: 2 }}>
       <AppLogo />
       <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
-      <NavTabs />
+      <Tabs value={currentTab} textColor='inherit'>
+        <Tab label="Home" value="/" to="/" component={Link} />
+        <Tab label="Add Recipe" value="/add-recipe" to="/add-recipe" component={Link} />
+        <Tab label="All Recipes" value="/recipes" to="/recipes" component={Link} />
+      </Tabs>
     </Toolbar>
   )
 }
@@ -65,41 +82,58 @@ export default function Layout() {
   })
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <AppBar componenet="nav">
-        <Container disableGutters maxWidth="lg">
-          {isMobile ? <MobileToolbar /> : <DesktopToolbar />}
-        </Container>
-      </AppBar>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-        }}
-      >
-        <Toolbar />
-        <Container disableGutters maxWidth="lg" sx={{ p: 2, minHeight: 1200 }}>
-          <Outlet />
-        </Container>
+    <Fragment>
+
+      {/* Toolbar */}
+      <Box sx={{ display: 'flex' }}>
+        <AppBar componenet="nav">
+          <Container disableGutters maxWidth="lg">
+            {isMobile ? <MobileToolbar /> : <DesktopToolbar />}
+          </Container>
+        </AppBar>
+
+        {/* Main Container */}
         <Box
+          component="main"
           sx={{
-            bgcolor: theme.palette.secondary.main
+            flexGrow: 1,
           }}
         >
+          <Toolbar />
           <Container
             disableGutters
             maxWidth="lg"
             sx={{
-              mt: 2,
-              p: 2,
-              height: 200,
-              color: theme.palette.common.white
+              p: isMobile ? 1 : 2,
+              pb: isMobile ? 3 : 4
             }}
           >
-            <Typography variant="h5" pt={2}>Contact Information</Typography>
+            <Outlet />
           </Container>
         </Box>
       </Box>
-    </Box>
+
+      {/* Footer */}
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          bgcolor: theme.palette.secondary.main
+        }}
+      >
+        <Container
+          disableGutters
+          maxWidth="lg"
+          sx={{
+            px: 2,
+            height: 16,
+            color: theme.palette.common.white
+          }}
+        >
+        </Container>
+      </Box>
+    </Fragment>
   )
 }

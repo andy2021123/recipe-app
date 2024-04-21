@@ -4,7 +4,7 @@ import { Button } from 'components/Form'
 import { getCroppedImg } from './utils'
 import { Box } from '@mui/material'
 
-export default function ImageCropper({ image, setOpen, setImageFile }) {
+export default function ImageCropper({ image, setOpen, setImageFile, resizeWidth }) {
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [rotation, setRotation] = useState(0)
   const [zoom, setZoom] = useState(1)
@@ -19,7 +19,8 @@ export default function ImageCropper({ image, setOpen, setImageFile }) {
       const croppedImage = await getCroppedImg(
         image,
         croppedAreaPixels,
-        rotation
+        rotation,
+        resizeWidth
       )
       console.log(croppedImage)
       setImageFile(croppedImage)

@@ -1,52 +1,55 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
-import prettier from 'prettier'
-import readJSON from './readJSON.js'
 import getDomainFromURL from './getDomainFromURL.js'
+import { getSelectors } from '../database/selectors.js'
 
 export async function scrapeWebsite(url) {
-  const { data: html } = await axios.get(url)
-  const $ = cheerio.load(html)
+  const response = await getHTML(url)
 
-  const { 
-    ingredient_include, 
-    instruction_include, 
-  } = getDomainElements(url)
+  if (response) {
+    const { data: html } = response
+    const $ = cheerio.load(html)
 
-  const ingredients = $(ingredient_include).map((_, ingredient) => {
-    let raw = $(ingredient).text()
-    return raw.trim()
-      .replace(/\s+/g, ' ')
-      .replace(/▢ /g, '')
-  }
-  ).get()
-  console.log(ingredients)
+    const domain = getDomainFromURL(url)
+    const {
+      name, ingredients, instructions
+    } = await getSelectors(domain)
 
-  const instructions = $(instruction_include).map((_, instruction) => {
-    let raw = $(instruction).text()
-    return raw.trim()
-  }
-  ).get()
-  console.log(instructions)
+    const $name = $(name).text().trim() || null
 
-  return { ingredients: ingredients, instructions: instructions }
-}
-
-async function prettyPrintHTML(html) { // for dev and debug purposes
-  const formattedHtml = await prettier.format(html, { parser: 'html' })
-  console.log(formattedHtml)
-}
-
-function getDomainElements(url) {
-  const elements = readJSON('elements.json')
-  const domain = getDomainFromURL(url)
-  for (let i = 0; i < elements.length; i++) {
-    if (elements[i].domain === domain) {
-      return {
-        ingredient_include: elements[i].ingredient_include, 
-        instruction_include: elements[i].instruction_include,
-      }
+    const $ingredients = $(ingredients).map((_, ingredient) => {
+      let raw = $(ingredient).text()
+      return raw.trim()
+        .replace(/\s+/g, ' ')
+        .replace(/▢ /g, '')
     }
+    ).get()
+
+    const $instructions = $(instructions).map((_, instruction) => {
+      let raw = $(instruction).text()
+      return raw.trim()
+    }
+    ).get()
+
+    return { name: $name, ingredients: $ingredients, instructions: $instructions }
+  } else {
+    return { name: null, ingredients: [], instructions: [] }
   }
-  return null
+
+}
+
+function wait(ms) {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(new Error('timeout succeeded')), ms);
+  });
+}
+
+
+async function getHTML(url) {
+  try {
+    return await Promise.race([wait(3000), axios.get(url)])
+  } catch (err) {
+    return null
+  }
+
 }

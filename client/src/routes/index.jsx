@@ -2,10 +2,9 @@ import { Route, BrowserRouter, Routes } from "react-router-dom"
 import Layout from "layout"
 import Home from "./Home"
 import NoPage from "./NoPage"
-import Recipes from "./Recipes"
+import { AllRecipes, CategorizedRecipes } from "./Recipes"
 import Recipe from "./Recipe"
 import AddRecipe from "./AddRecipe"
-import CategoryRecipes from "./Recipes/CategoryRecipes"
 
 const AppRoutes = () => {
   return (
@@ -14,11 +13,11 @@ const AppRoutes = () => {
         <Route element={<Layout />}>
           <Route element={<Home />} path="/" exact />
           <Route path="/recipes">
-            <Route index element={<Recipes />} exact/>
-            <Route element={<CategoryRecipes />} path=":category"/>
+            <Route index element={<AllRecipes />} exact/>
+            <Route element={<CategorizedRecipes />} path=":category"/>
           </Route>
-          <Route element={<AddRecipe />} path="add-recipe" />
-          <Route element={<Recipe />} path="/:id" />
+          <Route element={<AddRecipe />} path="/add-recipe" />
+          <Route element={<Recipe />} path="/recipe/:id" />
           <Route element={<NoPage />} path="*" />
         </Route>
       </Routes>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from './api'
 
-const useAxiosImage = (url, payload) => {
+const useAxiosImage = (url) => {
   const [image, setImage] = useState(null)
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(true)

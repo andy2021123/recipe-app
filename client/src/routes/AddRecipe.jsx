@@ -1,5 +1,6 @@
 import {
   Fragment,
+  useEffect,
   useState
 } from 'react'
 // import { useNavigate } from "react-router-dom"
@@ -8,8 +9,8 @@ import { Alert, Box, CircularProgress, Grid, Modal, Paper, Typography } from '@m
 import { Form, Input, DynamicFields, Button, Select, useFormMethods } from 'components/Form'
 import Title from 'components/Title'
 import api from 'hooks/useAxios/api'
-import axios from 'axios'
 import ImageCropper from 'features/ImageCropper'
+import { useSearchParams } from 'react-router-dom'
 
 
 const style = {
@@ -23,33 +24,51 @@ const style = {
   boxShadow: 24,
 }
 
-function UrlForm() {
+function UrlForm({ setError }) {
   const { getValues, setValue } = useFormMethods()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const onURL = (url) => {
-    console.log(url)
-    setValue('name', 'New Name', { shouldDirty: true })
-    setValue('description', 'New Description', { shouldDirty: true })
-    setValue('ingredients', ["SET New Ingredient"])
-    setValue('instructions', ["SET New Instructions"])
+  useEffect(() => {
+    const url = searchParams.get('url')
+
+    if (url) {
+      // reset url form value
+      if (!getValues('url')) {
+        setValue('url', url)
+      }
+
+      // make autofill request
+      api.get(`/recipe/autofill?url=${url}`)
+      .then(res => {
+        const { name, ingredients, instructions } = res.data
+        setValue('name', name)
+        setValue('ingredients', ingredients)
+        setValue('instructions', instructions)
+      })
+      .catch(err => console.log('no recipe data found'))
+    }
+  }, [searchParams])
+
+
+
+  const onURL = () => {
+    const value = getValues('url')
+    setSearchParams(value.length > 0 ? { url: value } : '')
   }
 
   return (
     <Fragment>
       <Input name="url" label="Recipe URL" />
-      <Button type="button" onClick={() => {
-        const url = getValues('url')
-        onURL(url)
-      }}>Autofill Recipe From URL</Button>
+      <Button type="button" onClick={onURL}>Autofill Recipe From URL</Button>
     </Fragment>
   )
 }
 
-function ImageInput({ setImageFile }) {
+function ImageInput({ onChange: setImageFile, resizeWidth }) {
   const [open, setOpen] = useState(false)
   const [image, setImage] = useState(null)
 
-  const onSelectFile = (event) => {
+  const handleSelectFile = (event) => {
     if (!event.target.files || event.target.files.length === 0) {
       return
     } else {
@@ -65,11 +84,11 @@ function ImageInput({ setImageFile }) {
         <Typography variant='h5' color='primary'>Image</Typography>
       </Grid>
       <Grid item xs={12}>
-        <input type="file" name="image" accept="image/*" label="Image" onChange={onSelectFile} />
+        <input type="file" name="image" accept="image/*" label="Image" onChange={handleSelectFile} />
       </Grid>
       <Modal open={open}>
         <Box sx={style}>
-          <ImageCropper name="image" image={image} setOpen={setOpen} setImageFile={setImageFile}/>
+          <ImageCropper name="image" image={image} setOpen={setOpen} setImageFile={setImageFile} resizeWidth={resizeWidth} />
         </Box>
       </Modal>
     </Fragment>
@@ -97,7 +116,7 @@ function RecipeForm() {
   }
 
   const submitImage = (id) => {
-    axios.post(`/api/recipe/image?id=${id}`, imageFile, {
+    api.post(`/recipe/${id}/image`, imageFile, {
       headers: {
         'Content-Type': 'multipart/form-data;',
       }
@@ -105,7 +124,7 @@ function RecipeForm() {
       .then(() => setSuccess(true))
       .catch(() => setError({ message: 'image was not successfully uploaded, but data was' }))
       .finally(() => setLoading(false))
-  } 
+  }
 
   return (
     <Form
@@ -115,15 +134,15 @@ function RecipeForm() {
     >
       {success && <Alert severity="success">Data Successfully Submitted</Alert>}
       {error && <Alert severity="error">{error.message}</Alert>}
-      {loading && <CircularProgress/>}
-      <UrlForm />
-      <ImageInput setImageFile={setImageFile}/>
+      {loading && <CircularProgress />}
+      <UrlForm setError={setError} />
+      <ImageInput onChange={setImageFile} resizeWidth={400} />
       <Grid item xs={12}>
         <Typography variant='h5' color='primary'>Description</Typography>
       </Grid>
       <Input name="name" label="Name" required xs={12} md={6} />
       <Select
-        options={["Entree", "Side", "Drink", "Dessert"]}
+        options={["Entrees", "Sides", "Drinks", "Desserts"]}
         name="category" label="Category" required xs={12} md={6}
       />
       <Input name="description" label="Description" required />
