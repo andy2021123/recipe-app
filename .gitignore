@@ -34,4 +34,5 @@ dist-ssr
 *.sw?
 
 # App-specific
-server/images/
+server/images/*
+!server/images/AppImage.png
