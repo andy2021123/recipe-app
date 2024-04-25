@@ -1,20 +1,26 @@
 import express from 'express'
-import morgan from 'morgan'
 import cookieparser from 'cookie-parser'
 import helmet from 'helmet'
 import router from './routes/index.js'
+import client from './client.js'
 import './scheduledJobs.js'
 
 // create app instance
 const app = express()
 
 // middleware 
-app.use(helmet()) // provides useful security headers
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "img-src": ["'self'", "blob:"]
+      }
+    }
+  })
+)
 app.use(cookieparser())
 app.use(express.json()) 
-app.use(morgan('dev', {
-  skip: (req, res) => req.route.path === '/:id/image' // skips logging image requests
-})) // console logs request information
 
 // basic error handling
 app.use((err, req, res, next) => {
@@ -22,8 +28,8 @@ app.use((err, req, res, next) => {
   res.status(500).send({message: 'Internal Error!'})
 })
 
-// routes
-app.use('/api', router)
+app.use('/api', router) // api routes
+app.use('/', client) // client routes
 
 // start the app on designated port
 const port = process.env.PORT || 5000

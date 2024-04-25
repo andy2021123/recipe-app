@@ -1,5 +1,5 @@
 import express from 'express'
-import { addRecipe, getCategoryRecipes, getRecipe, getRecipes } from '../database/recipe.js'
+import { addRecipe, deleteRecipe, getCategoryRecipes, getRecipe, getRecipes } from '../database/recipe.js'
 import fs from 'node:fs'
 import multer from 'multer'
 import { scrapeWebsite } from '../utils/scraper.js'
@@ -22,8 +22,6 @@ router.get('/list/:category', async (req, res) => {
 
 router.get('/autofill', async (req, res) => {
   const { url } = req.query
-  console.log(url)
-
   const recipe = await scrapeWebsite(url)
   
   res.send(recipe)
@@ -33,6 +31,17 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params
   const recipe = await getRecipe(id)
   res.send(recipe)
+})
+
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params
+
+  if (fs.existsSync(`images/${id}.png`)) {
+    fs.unlinkSync(`images/${id}.png`)
+  }
+  await deleteRecipe(id)
+  
+  res.sendStatus(202)
 })
 
 // adds recipe to database and returns the name_url (id) of the recipe

@@ -12,10 +12,17 @@ export async function scrapeWebsite(url) {
 
     const domain = getDomainFromURL(url)
     const {
-      name, ingredients, instructions
+      name,
+      description, 
+      ingredients, 
+      instructions,
+      prep_time,
+      cook_time,
     } = await getSelectors(domain)
 
     const $name = $(name).text().trim() || null
+
+    const $description = $(description).text().trim() || null
 
     const $ingredients = $(ingredients).map((_, ingredient) => {
       let raw = $(ingredient).text()
@@ -28,12 +35,32 @@ export async function scrapeWebsite(url) {
     const $instructions = $(instructions).map((_, instruction) => {
       let raw = $(instruction).text()
       return raw.trim()
+        .replace(/\s+/g, ' ')
     }
     ).get()
 
-    return { name: $name, ingredients: $ingredients, instructions: $instructions }
+    const $prep_time = $(prep_time).text().trim()
+      .replace(/minutes/g, '')
+
+    const $cook_time = $(cook_time).text().trim()
+      .replace(/minutes/g, '')
+
+    return { 
+      name: $name, 
+      description: $description, 
+      ingredients: $ingredients, 
+      instructions: $instructions, 
+      prep_time: parseInt($prep_time) || null,
+      cook_time: parseInt($cook_time) || null,
+    }
   } else {
-    return { name: null, ingredients: [], instructions: [] }
+    return { name: null, 
+      description: null, 
+      ingredients: [], 
+      instructions: [], 
+      prep_time: null,
+      cook_time: null,
+    }
   }
 
 }

@@ -10,7 +10,7 @@ import { Form, Input, DynamicFields, Button, Select, useFormMethods } from 'comp
 import Title from 'components/Title'
 import api from 'hooks/useAxios/api'
 import ImageCropper from 'features/ImageCropper'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 
 const style = {
@@ -39,13 +39,24 @@ function UrlForm({ setError }) {
 
       // make autofill request
       api.get(`/recipe/autofill?url=${url}`)
-      .then(res => {
-        const { name, ingredients, instructions } = res.data
-        setValue('name', name)
-        setValue('ingredients', ingredients)
-        setValue('instructions', instructions)
-      })
-      .catch(err => console.log('no recipe data found'))
+        .then(res => {
+          const {
+            name,
+            description,
+            ingredients,
+            instructions,
+            prep_time,
+            cook_time,
+          } = res.data
+
+          setValue('name', name)
+          setValue('description', description)
+          setValue('ingredients', ingredients)
+          setValue('instructions', instructions)
+          setValue('prep_time', prep_time)
+          setValue('cook_time', cook_time)
+        })
+        .catch(err => console.log('no recipe data found'))
     }
   }, [searchParams])
 
@@ -96,6 +107,7 @@ function ImageInput({ onChange: setImageFile, resizeWidth }) {
 }
 
 function RecipeForm() {
+  const navigate = useNavigate()
   const [imageFile, setImageFile] = useState(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -109,7 +121,12 @@ function RecipeForm() {
     setLoading(true)
     api.post('/recipe', data)
       .then((res) => {
-        imageFile ? submitImage(res.data) : setSuccess(true)
+        if (imageFile) {
+          submitImage(res.data)
+        } else {
+          setSuccess(true)
+          redirectToRecipe(res.data)
+        }
       })
       .catch(() => setError({ message: 'no data was successfully uploaded' }))
       .finally(() => setLoading(false))
@@ -121,9 +138,21 @@ function RecipeForm() {
         'Content-Type': 'multipart/form-data;',
       }
     })
-      .then(() => setSuccess(true))
+      .then(() => {
+        setSuccess(true)
+        setLoading(false)
+        redirectToRecipe(id)
+      })
       .catch(() => setError({ message: 'image was not successfully uploaded, but data was' }))
-      .finally(() => setLoading(false))
+      .finally(() => {
+        setLoading(false)
+      })
+  }
+
+  const redirectToRecipe = (id) => {
+    setTimeout(() => {
+      navigate(`/recipe/${id}`)
+    }, 2000)
   }
 
   return (
@@ -136,7 +165,7 @@ function RecipeForm() {
       {error && <Alert severity="error">{error.message}</Alert>}
       {loading && <CircularProgress />}
       <UrlForm setError={setError} />
-      <ImageInput onChange={setImageFile} resizeWidth={400} />
+      <ImageInput onChange={setImageFile} resizeWidth={600} />
       <Grid item xs={12}>
         <Typography variant='h5' color='primary'>Description</Typography>
       </Grid>

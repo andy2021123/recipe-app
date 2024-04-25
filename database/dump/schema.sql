@@ -16,9 +16,9 @@ CREATE TABLE public.recipes (
   name VARCHAR(255) NOT NULL,
   name_url VARCHAR(255) NOT NULL,
   category VARCHAR(63) NOT NULL,
-  description VARCHAR(255) NOT NULL,
+  description VARCHAR(1000) NOT NULL,
   keywords VARCHAR(255),
-  notes VARCHAR(255),
+  notes VARCHAR(1000),
   cook_time smallint,
   prep_time smallint
 );
@@ -26,7 +26,7 @@ CREATE TABLE public.recipes (
 CREATE TABLE public.ingredients (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   recipe_id UUID,
-  name VARCHAR(255) NOT NULL,
+  name VARCHAR(1000) NOT NULL,
   FOREIGN KEY (recipe_id) REFERENCES recipes(id)
 );
 
@@ -45,14 +45,16 @@ CREATE TABLE public.selectors (
   description VARCHAR(255),
   ingredients VARCHAR(255) NOT NULL,
   instructions VARCHAR(255) NOT NULL,
+  prep_time VARCHAR(255),
+  cook_time VARCHAR(255),
   notes VARCHAR(255),
   image VARCHAR(255)
 );
 
-INSERT INTO public.selectors (domain, name, description, ingredients, instructions) VALUES
-('thewholesomedish', '.entry-title', '.wprm-recipe-summary', '.wprm-recipe-ingredient', '.wprm-recipe-instruction-text'),
-('food', '.svelte-1muv3s8', NULL, 'li[style*="display: contents"]:not(:has(.ingredient-heading))', '.direction'),
-('cookingwithkarli', '.wprm-recipe-name', '.wprm-recipe-summary', '.wprm-recipe-ingredient', '.wprm-recipe-instruction-text');
+INSERT INTO public.selectors (domain, name, description, ingredients, instructions, cook_time, prep_time) VALUES
+('thewholesomedish', '.entry-title', '.wprm-recipe-summary', '.wprm-recipe-ingredient', '.wprm-recipe-instruction-text', '.wprm-recipe-cook_time-minutes', '.wprm-recipe-prep_time-minutes'),
+('food', '.svelte-1muv3s8', NULL, 'li[style*="display: contents"]:not(:has(.ingredient-heading))', '.direction', NULL, NULL),
+('cookingwithkarli', '.wprm-recipe-name', '.wprm-recipe-summary', '.wprm-recipe-ingredient', '.wprm-recipe-instruction-text', '.wprm-recipe-cook_time-minutes', '.wprm-recipe-prep_time-minutes');
 
 -- example values
 -- INSERT INTO public.recipes (name, name_url, category, description) VALUES
