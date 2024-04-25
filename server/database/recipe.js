@@ -46,6 +46,23 @@ export async function getRecipe(id) {
   return rows[0]
 }
 
+export async function getRecipeMeta(id) {
+  const { rows } = await pool.query(`
+    SELECT 
+      id, name, description
+    FROM recipes
+    WHERE name_url = $1
+  `, [id]);
+  return rows[0] || { id: null, name: "Recipe Doesn't Exist", description: null}
+}
+
+export async function deleteRecipe(name_url) {
+  const { id } = await getRecipeMeta(name_url) 
+  await pool.query(`DELETE FROM ingredients WHERE recipe_id = $1`, [id])
+  await pool.query(`DELETE FROM instructions WHERE recipe_id = $1`, [id])
+  await pool.query(`DELETE FROM recipes WHERE id = $1`, [id])
+}
+
 async function addRecipeDetails({ name, name_url, category, description, keywords, notes, cook_time, prep_time }) {
   const details = [name, name_url, category, description, keywords, notes, parseInt(cook_time) || null, parseInt(prep_time) || null]
   const { rows } = await pool.query(format(`
@@ -97,6 +114,5 @@ export async function addRecipe(recipe) {
   await addIngredients(id, recipe)
   await addInstructions(id, recipe)
 
-  console.log('success')
   return name_url
 }

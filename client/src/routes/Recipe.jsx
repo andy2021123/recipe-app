@@ -1,15 +1,61 @@
-import { useParams } from 'react-router-dom'
-import { Box, Divider, Grid, Link, List, ListItem, Paper, Skeleton, useMediaQuery, useTheme } from '@mui/material'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Box, Divider, Grid, IconButton, Link, List, ListItem, Paper, Skeleton, useMediaQuery, useTheme } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import useAxios, { useAxiosImage } from 'hooks/useAxios'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import Title from 'components/Title'
+import CloseIcon from '@mui/icons-material/Close'
+import api from 'hooks/useAxios/api'
+
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+
+function AlertDialog({ open, handleClose, onSubmit }) {
+	const theme = useTheme()
+
+  return (
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Delete this Recipe?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            This will delete the recipe permanently. Are you sure you want to do this?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button sx={{ color: theme.palette.grey[800] }} onClick={handleClose}>Cancel</Button>
+          <Button variant='contained' color='error' onClick={onSubmit} autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+  )
+}
 
 function TitleBlock({ id, recipe: { name, description, category } }) {
 	const theme = useTheme()
+	const navigate = useNavigate()
+	const [open, setOpen] = useState(false)
 
 	const { image, loading } = useAxiosImage(`/recipe/${id}/image`)
+
+	const removeRecipe = () => {
+		api.delete(`/recipe/${id}`)
+			.then(() => {
+				setOpen(false)
+				navigate('/recipes')
+			})
+	}
 
 	return (
 		<Paper
@@ -32,7 +78,13 @@ function TitleBlock({ id, recipe: { name, description, category } }) {
 						<Divider sx={{ mx: 1 }} orientation="vertical" flexItem color={theme.palette.common.white} />
 						<Link href={`/recipes/${category.toLowerCase()}`} color='inherit'>{category}</Link>
 					</Box>
-					<Typography variant='h3' fontWeight='bold' sx={{ py: 1 }}>{name}</Typography>
+					<Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', py: 1 }}>
+						<Typography variant='h3' fontWeight='bold'>{name}</Typography>
+						<IconButton onClick={() => setOpen(true)}>
+							<CloseIcon sx={{ color: theme.palette.common.white, fontSize: 40 }}/>
+						</IconButton>
+						<AlertDialog open={open} handleClose={() => setOpen(false)} onSubmit={removeRecipe}/>
+					</Box>
 					<Typography>{description}</Typography>
 				</Grid>
 				<Grid item xs={12} sm={3} md={2}>
@@ -99,11 +151,11 @@ function MainBlock({ recipe: { ingredients, instructions, cook_time, prep_time, 
 		<Paper sx={{ p: 2, mt: isMobile ? 1 : 2 }}>
 			<Box display='flex' pb={1}>
 				<AccessTimeIcon />
-				<Typography sx={{ pl: 1 }}>Cook Time: {cook_time} minutes</Typography>
+				<Typography sx={{ pl: 1 }}>Cook Time: {cook_time ? `${cook_time} minutes` : 'N/A'}</Typography>
 				<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-				<Typography>Prep Time: {prep_time} minutes</Typography>
+				<Typography>Prep Time: {prep_time ? `${prep_time} minutes` : 'N/A'}</Typography>
 				<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-				<Typography>Total Time: {cook_time + prep_time} minutes</Typography>
+				<Typography>Total Time: {cook_time && prep_time ? `${cook_time + prep_time} minutes` : 'N/A'} </Typography>
 			</Box>
 
 			<Divider />
