@@ -1,4 +1,4 @@
-import { Box, Paper, Grid, useTheme, Skeleton, CardActionArea, useMediaQuery, Link, Divider } from '@mui/material'
+import { Box, Paper, Grid, useTheme, Skeleton, CardActionArea, useMediaQuery, Link, Divider, Stack, Pagination } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import useAxios, { useAxiosImage } from 'hooks/useAxios'
 import Card from '@mui/material/Card'
@@ -14,8 +14,7 @@ function TitleBlock() {
   const theme = useTheme()
   const [_, setSearchParams] = useSearchParams()
 
-  const handleChange = (event) => {
-    const { value } = event.target
+  const handleChange = ({ target: { value } }) => {
     setSearchParams(value.length > 0 ? { search: value } : '')
   }
 
@@ -75,7 +74,7 @@ function CategoryTitleBlock({ category: { name, description } }) {
   )
 }
 
-function RecipeItem({ children: { id, name, category, description } }) {
+function RecipeItem({ children: { id, name, category } }) {
   const { image, loading } = useAxiosImage(`/recipe/${id}/image`)
   const navigate = useNavigate()
 
@@ -126,15 +125,15 @@ function RecipeItem({ children: { id, name, category, description } }) {
   )
 }
 
-function RecipeList(props) {
-  const { recipes } = props
+function RecipeList({ recipes }) {
   const [filteredRecipes, setFilteredRecipes] = useState(recipes)
+  const [page, setPage] = useState(1)
 
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
+    // update view based on search bar
     const search = searchParams.get('search')
-
     if (search) {
       setFilteredRecipes(recipes.filter((item) => (
         item.name.toLowerCase().includes(search.toLowerCase())
@@ -142,6 +141,15 @@ function RecipeList(props) {
     } else {
       setFilteredRecipes(recipes)
     }
+
+    // update from pagination
+    const page = parseInt(searchParams.get('page'))
+    if (page) {
+      setPage(page)
+    } else {
+      setPage(1)
+    }
+
   }, [searchParams])
 
   const theme = useTheme()
@@ -149,13 +157,24 @@ function RecipeList(props) {
     defaultMatches: true
   })
 
+  const itemsPerPage = 12
+
   return (
-    <Grid container spacing={isMobile ? 1 : 2} pt={isMobile ? 1 : 2} display={'flex'}>
-      {filteredRecipes && filteredRecipes.map((recipe, index) => (
-        <RecipeItem key={recipe.id}>{recipe}</RecipeItem>
-      )
-      )}
-    </Grid>
+    <Stack spacing={isMobile ? 1 : 2} alignItems='center' useFlexGap>
+      <Grid container spacing={isMobile ? 1 : 2} pt={isMobile ? 1 : 2} display={'flex'}>
+        {filteredRecipes && filteredRecipes.slice((page-1)*itemsPerPage, page*itemsPerPage || -1).map((recipe, index) => (
+          <RecipeItem key={recipe.id}>{recipe}</RecipeItem>
+        )
+        )}
+      </Grid>
+      <Pagination 
+        count={Math.ceil(filteredRecipes.length/itemsPerPage)} 
+        variant="outlined" 
+        shape="rounded" 
+        page={page}
+        onChange={(_, value) => setSearchParams({ page: value })}
+      />
+    </Stack>
   )
 }
 
