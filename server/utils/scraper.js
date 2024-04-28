@@ -54,7 +54,8 @@ export async function scrapeWebsite(url) {
       cook_time: parseInt($cook_time) || null,
     }
   } else {
-    return { name: null, 
+    return {
+      name: null, 
       description: null, 
       ingredients: [], 
       instructions: [], 

@@ -109,16 +109,15 @@ function ImageInput({ onChange: setImageFile, resizeWidth }) {
 function RecipeForm() {
   const navigate = useNavigate()
   const [imageFile, setImageFile] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
 
   const handleSubmit = (data) => {
-    console.log(data)
     setSuccess(false)
     setError(false)
 
-    setLoading(true)
+    setPending(true)
     api.post('/recipe', data)
       .then((res) => {
         if (imageFile) {
@@ -129,7 +128,7 @@ function RecipeForm() {
         }
       })
       .catch(() => setError({ message: 'no data was successfully uploaded' }))
-      .finally(() => setLoading(false))
+      .finally(() => setPending(false))
   }
 
   const submitImage = (id) => {
@@ -140,19 +139,19 @@ function RecipeForm() {
     })
       .then(() => {
         setSuccess(true)
-        setLoading(false)
+        setPending(false)
         redirectToRecipe(id)
       })
       .catch(() => setError({ message: 'image was not successfully uploaded, but data was' }))
       .finally(() => {
-        setLoading(false)
+        setPending(false)
       })
   }
 
   const redirectToRecipe = (id) => {
     setTimeout(() => {
       navigate(`/recipe/${id}`)
-    }, 2000)
+    }, 500)
   }
 
   return (
@@ -163,7 +162,7 @@ function RecipeForm() {
     >
       {success && <Alert severity="success">Data Successfully Submitted</Alert>}
       {error && <Alert severity="error">{error.message}</Alert>}
-      {loading && <CircularProgress />}
+      {pending && <CircularProgress />}
       <UrlForm setError={setError} />
       <ImageInput onChange={setImageFile} resizeWidth={600} />
       <Grid item xs={12}>
@@ -210,7 +209,7 @@ function RecipeForm() {
       <Input name="nutrition.carbs" label="Carbohydrates" xs={12} md={6} />
       <Input name="nutrition.fat" label="Fat" xs={12} md={6} />
 
-      <Button type="submit">Submit</Button>
+      <Button type="submit" disabled={pending}>Submit</Button>
     </Form>
   )
 }

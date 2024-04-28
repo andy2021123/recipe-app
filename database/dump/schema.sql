@@ -20,7 +20,8 @@ CREATE TABLE public.recipes (
   keywords VARCHAR(255),
   notes VARCHAR(1000),
   cook_time smallint,
-  prep_time smallint
+  prep_time smallint,
+  url VARCHAR(1000)
 );
 
 CREATE TABLE public.ingredients (
