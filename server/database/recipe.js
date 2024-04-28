@@ -35,7 +35,10 @@ export async function getRecipe(id) {
         FROM ingredients
         WHERE recipe_id = recipes.id
       ) AS ingredients, (
-        SELECT json_agg(instructions.name)
+        SELECT json_agg(
+          instructions.name 
+          ORDER BY instructions.index
+        )
         FROM instructions
         WHERE recipe_id = recipes.id
       ) AS instructions
@@ -63,8 +66,8 @@ export async function deleteRecipe(name_url) {
   await pool.query(`DELETE FROM recipes WHERE id = $1`, [id])
 }
 
-async function addRecipeDetails({ name, name_url, category, description, keywords, notes, cook_time, prep_time }) {
-  const details = [name, name_url, category, description, keywords, notes, parseInt(cook_time) || null, parseInt(prep_time) || null]
+async function addRecipeDetails({ name, name_url, category, description, keywords, notes, cook_time, prep_time, url }) {
+  const details = [name, name_url, category, description, keywords, notes, parseInt(cook_time) || null, parseInt(prep_time) || null, url]
   const { rows } = await pool.query(format(`
   INSERT INTO recipes (
     name,
@@ -74,7 +77,8 @@ async function addRecipeDetails({ name, name_url, category, description, keyword
     keywords,
     notes,
     cook_time,
-    prep_time
+    prep_time,
+    url
   ) VALUES (
     %L
   ) RETURNING id, name_url

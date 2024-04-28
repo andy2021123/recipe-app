@@ -7,7 +7,7 @@ const router = express.Router()
 
 // api only middleware
 router.use(morgan('dev', {
-  // skip: (req, res) => req.route.path === '/:id/image' // skips logging image requests
+  skip: (req, res) => req.route.path === '/:id/image' 
 })) // console logs request information
 
 // routes

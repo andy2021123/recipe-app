@@ -1,6 +1,6 @@
 import express from 'express'
 import cookieparser from 'cookie-parser'
-// import helmet from 'helmet'
+import helmet from 'helmet'
 import router from './routes/index.js'
 import cors from 'cors'
 import client from './client.js'
@@ -11,18 +11,14 @@ const app = express()
 
 // middleware 
 app.use(cors())
-// app.use(
-//   helmet({
-//     contentSecurityPolicy: {
-//       directives: {
-//         "img-src": ["'self'", "blob:"]
-//       }
-//     },
-//     crossOriginOpenerPolicy: false,
-//     originAgentCluster: false,
-//     strictTransportSecurity: false,
-//   })
-// )
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginOpenerPolicy: false,
+    originAgentCluster: false,
+    strictTransportSecurity: false,
+  })
+)
 app.use(cookieparser())
 app.use(express.json()) 
 

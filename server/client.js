@@ -11,6 +11,8 @@ const __filename = fileURLToPath(import.meta.url) // get the resolved path to th
 const __dirname = path.dirname(__filename) // get the name of the directory
 
 router.get('/', (req, res) => {
+  const domain = `${req.protocol}://${req.header('Host')}`
+
   const filePath = path.resolve(__dirname, dist, 'index.html')
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
@@ -19,7 +21,7 @@ router.get('/', (req, res) => {
       data = data
       .replace(/__TITLE__/g, "Twizz Stew")
       .replace(/__DESCRIPTION__/g, "Twizz Stew is a recipe app without ads!")
-      .replace(/__IMAGE__/g, "http://twizzstew.lan/api/image")
+      .replace(/__IMAGE__/g, `${domain}/api/image`)
 
       res.send(data)
     }
@@ -30,7 +32,7 @@ router.use(express.static(path.resolve(__dirname, dist)))
 
 router.get('/recipe/:id', async (req, res) => {
   const { id } = req.params
-  const domain = `${req.protocol}://${req.get('host')}`
+  const domain = `${req.protocol}://${req.header('Host')}`
 
   // get metadata about recipe from database
   const { name, description } = await getRecipeMeta(id)
@@ -43,7 +45,7 @@ router.get('/recipe/:id', async (req, res) => {
       data = data
         .replace(/__TITLE__/g, name)
         .replace(/__DESCRIPTION__/g, description)
-        .replace(/__IMAGE__/g, `http://twizzstew.lan/api/recipe/${id}/image`)
+        .replace(/__IMAGE__/g, `${domain}/api/recipe/${id}/image`)
 
       res.send(data)
     }
@@ -51,7 +53,8 @@ router.get('/recipe/:id', async (req, res) => {
 })
 
 router.get('/*', (req, res) => {
-  const domain = `${req.protocol}://${req.get('host')}`
+  const domain = `${req.protocol}://${req.header('Host')}`
+
   const filePath = path.resolve(__dirname, dist, 'index.html')
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
@@ -60,7 +63,7 @@ router.get('/*', (req, res) => {
       data = data
         .replace(/__TITLE__/g, "Twizz Stew")
         .replace(/__DESCRIPTION__/g, "Twizz Stew is a recipe app without ads!")
-        .replace(/__IMAGE__/g, "http://twizzstew.lan/api/image")
+        .replace(/__IMAGE__/g, `${domain}/api/image`)
 
       res.send(data)
     }

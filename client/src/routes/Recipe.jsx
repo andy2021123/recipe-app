@@ -17,32 +17,32 @@ import DialogTitle from '@mui/material/DialogTitle'
 function AlertDialog({ open, handleClose, onSubmit }) {
 	const theme = useTheme()
 
-  return (
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          Delete this Recipe?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            This will delete the recipe permanently. Are you sure you want to do this?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button sx={{ color: theme.palette.grey[800] }} onClick={handleClose}>Cancel</Button>
-          <Button variant='contained' color='error' onClick={onSubmit} autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-  )
+	return (
+		<Dialog
+			open={open}
+			onClose={handleClose}
+			aria-labelledby="alert-dialog-title"
+			aria-describedby="alert-dialog-description"
+		>
+			<DialogTitle id="alert-dialog-title">
+				Delete this Recipe?
+			</DialogTitle>
+			<DialogContent>
+				<DialogContentText id="alert-dialog-description">
+					This will delete the recipe permanently. Are you sure you want to do this?
+				</DialogContentText>
+			</DialogContent>
+			<DialogActions>
+				<Button sx={{ color: theme.palette.grey[800] }} onClick={handleClose}>Cancel</Button>
+				<Button variant='contained' color='error' onClick={onSubmit} autoFocus>
+					Delete
+				</Button>
+			</DialogActions>
+		</Dialog>
+	)
 }
 
-function TitleBlock({ id, recipe: { name, description, category } }) {
+function TitleBlock({ id, recipe: { name, description, category, url } }) {
 	const theme = useTheme()
 	const navigate = useNavigate()
 	const [open, setOpen] = useState(false)
@@ -65,8 +65,8 @@ function TitleBlock({ id, recipe: { name, description, category } }) {
 				p: 2
 			}}
 		>
-			<Grid container spacing={1} justifyContent='center'>
-				<Grid item xs={12} sm={9} md={10}>
+			<Grid container spacing={1} justifyContent='center' columns={48} alignItems='center'>
+				<Grid item xs={48} sm={image ? 32 : 48} md={image ? 41 : 48}>
 					<Box sx={{
 						display: 'flex',
 						alignItems: 'center',
@@ -78,16 +78,19 @@ function TitleBlock({ id, recipe: { name, description, category } }) {
 						<Divider sx={{ mx: 1 }} orientation="vertical" flexItem color={theme.palette.common.white} />
 						<Link href={`/recipes/${category.toLowerCase()}`} color='inherit'>{category}</Link>
 					</Box>
-					<Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', py: 1 }}>
-						<Typography variant='h3' fontWeight='bold'>{name}</Typography>
+					<Typography pt={1} variant='h3' fontWeight='bold'>
+						{name}
 						<IconButton onClick={() => setOpen(true)}>
-							<CloseIcon sx={{ color: theme.palette.common.white, fontSize: 40 }}/>
+							<CloseIcon sx={{ color: theme.palette.common.white, fontSize: 40 }} />
 						</IconButton>
-						<AlertDialog open={open} handleClose={() => setOpen(false)} onSubmit={removeRecipe}/>
-					</Box>
+						<AlertDialog open={open} handleClose={() => setOpen(false)} onSubmit={removeRecipe} />
+					</Typography>
 					<Typography>{description}</Typography>
+					{url && (
+						<Typography>For more information, see: <Link href={url} color='inherit'>{url}</Link></Typography>
+					)}
 				</Grid>
-				<Grid item xs={12} sm={3} md={2}>
+				<Grid item xs>
 					{image && (
 						<img
 							src={image}
@@ -117,30 +120,6 @@ function SectionTitle(props) {
 	)
 }
 
-function Ingredients({ ingredients }) {
-	return (
-		<List sx={{ listStyle: 'circle', pl: 4 }}>
-			{ingredients && ingredients.map((ingredient, index) => (
-				<ListItem key={index} sx={{ display: 'list-item' }}>
-					{ingredient}
-				</ListItem>
-			))}
-		</List>
-	)
-}
-
-function Instructions({ instructions }) {
-	return (
-		<List sx={{ listStyle: 'decimal', pl: 4 }}>
-			{instructions && instructions.map((instruction, index) => (
-				<ListItem key={index} sx={{ display: 'list-item' }}>
-					{instruction}
-				</ListItem>
-			))}
-		</List>
-	)
-}
-
 function MainBlock({ recipe: { ingredients, instructions, cook_time, prep_time, notes, keywords } }) {
 	const theme = useTheme()
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'), {
@@ -149,22 +128,39 @@ function MainBlock({ recipe: { ingredients, instructions, cook_time, prep_time, 
 
 	return (
 		<Paper sx={{ p: 2, mt: isMobile ? 1 : 2 }}>
-			<Box display='flex' pb={1}>
-				<AccessTimeIcon />
-				<Typography sx={{ pl: 1 }}>Cook Time: {cook_time ? `${cook_time} minutes` : 'N/A'}</Typography>
-				<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-				<Typography>Prep Time: {prep_time ? `${prep_time} minutes` : 'N/A'}</Typography>
-				<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-				<Typography>Total Time: {cook_time && prep_time ? `${cook_time + prep_time} minutes` : 'N/A'} </Typography>
-			</Box>
+			<Grid container spacing={2} alignItems='center' pb={1} justifyContent='center'>
+				<Grid item xs='auto'>
+					<AccessTimeIcon />
+				</Grid>
+				<Grid item xs display='flex'>
+					<Typography gutterBottom>Cook Time: {cook_time ? `${cook_time} minutes` : 'N/A'}</Typography>
+					<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
+					<Typography gutterBottom>Prep Time: {prep_time ? `${prep_time} minutes` : 'N/A'}</Typography>
+					<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
+					<Typography gutterBottom>Total Time: {cook_time && prep_time ? `${cook_time + prep_time} minutes` : 'N/A'} </Typography>
+				</Grid>
+			</Grid>
+
 
 			<Divider />
 
 			<SectionTitle>Ingredients</SectionTitle>
-			<Ingredients ingredients={ingredients} />
+			<List sx={{ listStyle: 'circle', pl: 4 }}>
+				{ingredients && ingredients.map((ingredient, index) => (
+					<ListItem key={index} sx={{ display: 'list-item' }}>
+						{ingredient}
+					</ListItem>
+				))}
+			</List>
 
 			<SectionTitle>Instructions</SectionTitle>
-			<Instructions instructions={instructions} />
+			<List sx={{ listStyle: 'decimal', pl: 4 }}>
+				{instructions && instructions.map((instruction, index) => (
+					<ListItem key={index} sx={{ display: 'list-item' }}>
+						{instruction}
+					</ListItem>
+				))}
+			</List>
 
 			{notes && (
 				<Fragment>
