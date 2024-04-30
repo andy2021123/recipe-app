@@ -1,13 +1,12 @@
 import {
   Fragment,
-  useEffect,
   useState
 } from 'react'
-import { Alert, Box, CircularProgress, Grid, Modal, Paper, Typography } from '@mui/material'
-import { Form, Input, DynamicFields, Button, Select, useFormMethods } from 'components/Form'
+import { Alert, CircularProgress, Grid, Paper, Typography, useTheme } from '@mui/material'
+import { Form, Input, Button, useFormMethods } from 'components/Form'
 import Title from 'components/Title'
 import api from 'hooks/useAxios/api'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import getDomainFromURL from 'utils/getDomainFromURL'
 import { MainBlock } from './Recipe'
 
@@ -31,9 +30,8 @@ function UrlForm({ setRecipe }) {
   )
 }
 
-function RecipeForm() {
+function SelectorsForm({ setRecipe }) {
   const navigate = useNavigate()
-  const [imageFile, setImageFile] = useState(null)
   const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
@@ -41,111 +39,11 @@ function RecipeForm() {
   const handleSubmit = (data) => {
     setSuccess(false)
     setError(false)
-
     setPending(true)
-    api.post('/recipe', data)
-      .then((res) => {
-        if (imageFile) {
-          submitImage(res.data)
-        } else {
-          setSuccess(true)
-          redirectToRecipe(res.data)
-        }
-      })
+
+    api.post('/selectors', data)
       .catch(() => setError({ message: 'no data was successfully uploaded' }))
       .finally(() => setPending(false))
-  }
-
-  const submitImage = (id) => {
-    api.post(`/recipe/${id}/image`, imageFile, {
-      headers: {
-        'Content-Type': 'multipart/form-data;',
-      }
-    })
-      .then(() => {
-        setSuccess(true)
-        setPending(false)
-        redirectToRecipe(id)
-      })
-      .catch(() => setError({ message: 'image was not successfully uploaded, but data was' }))
-      .finally(() => {
-        setPending(false)
-      })
-  }
-
-  const redirectToRecipe = (id) => {
-    setTimeout(() => {
-      navigate(`/recipe/${id}`)
-    }, 500)
-  }
-
-  return (
-    <Form
-      spacing={2}
-      onSubmit={handleSubmit}
-      defaultValues={{ ingredients: [""], instructions: [""] }}
-    >
-      {success && <Alert severity="success">Data Successfully Submitted</Alert>}
-      {error && <Alert severity="error">{error.message}</Alert>}
-      {pending && <CircularProgress />}
-      <UrlForm setError={setError} />
-      <Grid item xs={12}>
-        <Typography variant='h5' color='primary'>Description</Typography>
-      </Grid>
-      <Input name="name" label="Name" required xs={12} md={6} />
-      <Select
-        options={["Entrees", "Sides", "Drinks", "Desserts"]}
-        name="category" label="Category" required xs={12} md={6}
-      />
-      <Input name="description" label="Description" required />
-      <DynamicFields
-        name="keywords"
-        label="Keywords"
-        xs={12}
-      />
-
-      <Grid item xs={12}>
-        <Typography variant='h5' color='primary'>Recipe</Typography>
-      </Grid>
-      <Input type="number" name="prep_time" label="Preparation Time (minutes)" xs={12} md={6} />
-      <Input type="number" name="cook_time" label="Cook Time (minutes)" xs={12} md={6} />
-      <DynamicFields
-        name="ingredients"
-        label="Ingredients"
-        xs={12}
-        md={6}
-        required
-      />
-      <DynamicFields
-        name="instructions"
-        label="Instructions"
-        xs={12}
-        md={6}
-        required
-      />
-      <Input multiline rows={2} name="notes" label="Notes" />
-
-      <Grid item xs={12}>
-        <Typography variant='h5' color='primary'>Nutrition</Typography>
-      </Grid>
-      <Input name="nutrition.calories" label="Calories" xs={12} md={6} />
-      <Input name="nutrition.protein" label="Protein" xs={12} md={6} />
-      <Input name="nutrition.carbs" label="Carbohydrates" xs={12} md={6} />
-      <Input name="nutrition.fat" label="Fat" xs={12} md={6} />
-
-      <Button type="submit" disabled={pending}>Submit</Button>
-    </Form>
-  )
-}
-
-function SelectorsForm({ setRecipe }) {
-  const navigate = useNavigate()
-  const [pending, setPending] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState(false)
-
-  const handleSubmit = () => {
-
   }
 
   return (
@@ -161,7 +59,15 @@ function SelectorsForm({ setRecipe }) {
         prep_time: '.wprm-recipe-prep_time-minutes',
       }}
     >
+      {/* Flash Messages */}
+      {success && <Alert severity="success">Data Successfully Submitted</Alert>}
+      {error && <Alert severity="error">{error.message}</Alert>}
+      {pending && <CircularProgress />}
+
+      {/* Test URL */}
       <UrlForm setRecipe={setRecipe}/>
+
+      {/* Selectors */}
       <Grid item xs={12}>
         <Typography variant='h5' color='primary'>Selectors</Typography>
       </Grid>
@@ -173,22 +79,36 @@ function SelectorsForm({ setRecipe }) {
       <Input name="prep_time" label="Preparation Time" xs={12} md={6} />
       <Input name="cook_time" label="Cook Time" xs={12} md={6} />
       <Input name="notes" label="Notes" xs={12} md={6} />
-      <Button type="submit" disabled={false}>Submit Values to Database</Button>
+
+      <Button type="submit" disabled={pending}>Save Values</Button>
     </Form>
   )
 }
 
 export default function AddDomain() {
+  const theme = useTheme()
   const [recipe, setRecipe] = useState(null)
 
   return (
     <Fragment>
       <Paper sx={{ p: 2, mb: 2 }}>
         <Title>Add New Domain</Title>
-        <SelectorsForm setRecipe={setRecipe}/>
+        <SelectorsForm setRecipe={setRecipe} />
       </Paper>
       {recipe && (
-        <MainBlock recipe={recipe}/>
+        <Fragment>
+          <Paper
+            sx={{
+              bgcolor: theme.palette.secondary.light,
+              color: theme.palette.common.white,
+              p: 2
+            }}
+          >
+            <Typography variant='h4' fontWeight='bold'>{recipe.name}</Typography>
+            <Typography>{recipe.description}</Typography>
+          </Paper>
+          <MainBlock recipe={recipe} />
+        </Fragment>
       )}
     </Fragment>
   )
