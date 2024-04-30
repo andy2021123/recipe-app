@@ -3,22 +3,12 @@ import * as cheerio from 'cheerio'
 import getDomainFromURL from './getDomainFromURL.js'
 import { getSelectors } from '../database/selectors.js'
 
-export async function scrapeWebsite(url) {
+export async function runScraper(url, { name, description, ingredients, instructions, prep_time, cook_time }) {
   const response = await getHTML(url)
 
   if (response) {
     const { data: html } = response
     const $ = cheerio.load(html)
-
-    const domain = getDomainFromURL(url)
-    const {
-      name,
-      description, 
-      ingredients, 
-      instructions,
-      prep_time,
-      cook_time,
-    } = await getSelectors(domain)
 
     const $name = $(name).text().trim() || null
 
@@ -64,6 +54,24 @@ export async function scrapeWebsite(url) {
     }
   }
 
+}
+
+export async function scrapeWebsite(url) {
+  const domain = getDomainFromURL(url)
+
+  if (domain) {
+    const selectors = await getSelectors(domain)
+    return await runScraper(url, selectors)
+  } else {
+    return {
+      name: null, 
+      description: null, 
+      ingredients: [], 
+      instructions: [], 
+      prep_time: null,
+      cook_time: null,
+    }
+  }
 }
 
 function wait(ms) {

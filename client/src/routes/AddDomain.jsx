@@ -7,99 +7,26 @@ import { Alert, Box, CircularProgress, Grid, Modal, Paper, Typography } from '@m
 import { Form, Input, DynamicFields, Button, Select, useFormMethods } from 'components/Form'
 import Title from 'components/Title'
 import api from 'hooks/useAxios/api'
-import ImageCropper from 'features/ImageCropper'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import getDomainFromURL from 'utils/getDomainFromURL'
+import { MainBlock } from './Recipe'
 
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  height: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-}
-
-function UrlForm({}) {
+function UrlForm({ setRecipe }) {
   const { getValues, setValue } = useFormMethods()
-  const [searchParams, setSearchParams] = useSearchParams()
 
-  useEffect(() => {
-    const url = searchParams.get('url')
-
-    if (url) {
-      // reset url form value
-      if (!getValues('url')) {
-        setValue('url', url)
-      }
-
-      // make autofill request
-      api.get(`/recipe/autofill?url=${url}`)
-        .then(res => {
-          const {
-            name,
-            description,
-            ingredients,
-            instructions,
-            prep_time,
-            cook_time,
-          } = res.data
-
-          setValue('name', name)
-          setValue('description', description)
-          setValue('ingredients', ingredients)
-          setValue('instructions', instructions)
-          setValue('prep_time', prep_time)
-          setValue('cook_time', cook_time)
-        })
-        .catch(err => console.log('no recipe data found'))
-    }
-  }, [searchParams])
-
-
-
-  const onURL = () => {
-    const value = getValues('url')
-    setSearchParams(value.length > 0 ? { url: value } : '')
+  const handleTest = () => {
+    setRecipe(null)
+    const data = getValues()
+    api.post(`/selectors/test`, data)
+      .then((res) => {
+        setRecipe(res.data)
+      })
   }
 
   return (
     <Fragment>
-      <Input name="url" label="Recipe URL" />
-      <Button type="button" onClick={onURL}>Autofill Recipe From URL</Button>
-    </Fragment>
-  )
-}
-
-function ImageInput({ onChange: setImageFile, resizeWidth }) {
-  const [open, setOpen] = useState(false)
-  const [image, setImage] = useState(null)
-
-  const handleSelectFile = (event) => {
-    if (!event.target.files || event.target.files.length === 0) {
-      return
-    } else {
-      const objectUrl = URL.createObjectURL(event.target.files[0])
-      setImage(objectUrl)
-      setOpen(true)
-    }
-  }
-
-  return (
-    <Fragment>
-      <Grid item xs={12}>
-        <Typography variant='h5' color='primary'>Image</Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <input type="file" name="image" accept="image/*" label="Image" onChange={handleSelectFile} />
-      </Grid>
-      <Modal open={open}>
-        <Box sx={style}>
-          <ImageCropper name="image" image={image} setOpen={setOpen} setImageFile={setImageFile} resizeWidth={resizeWidth} />
-        </Box>
-      </Modal>
+      <Input name="url" label="Test Recipe URL" required onChange={(event) => setValue('domain', getDomainFromURL(event.target.value))} />
+      <Button type="button" onClick={handleTest}>Test the Current Values</Button>
     </Fragment>
   )
 }
@@ -162,7 +89,6 @@ function RecipeForm() {
       {error && <Alert severity="error">{error.message}</Alert>}
       {pending && <CircularProgress />}
       <UrlForm setError={setError} />
-      <ImageInput onChange={setImageFile} resizeWidth={600} />
       <Grid item xs={12}>
         <Typography variant='h5' color='primary'>Description</Typography>
       </Grid>
@@ -212,13 +138,58 @@ function RecipeForm() {
   )
 }
 
+function SelectorsForm({ setRecipe }) {
+  const navigate = useNavigate()
+  const [pending, setPending] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState(false)
 
-export default function AddRecipe() {
+  const handleSubmit = () => {
+
+  }
 
   return (
-    <Paper sx={{ p: 2 }}>
-      <Title>Add New Recipe</Title>
-      <RecipeForm />
-    </Paper>
+    <Form
+      spacing={2}
+      onSubmit={handleSubmit}
+      defaultValues={{
+        name: '.wprm-recipe-name',
+        description: '.wprm-recipe-summary',
+        ingredients: '.wprm-recipe-ingredient',
+        instructions: '.wprm-recipe-instruction-text',
+        cook_time: '.wprm-recipe-cook_time-minutes',
+        prep_time: '.wprm-recipe-prep_time-minutes',
+      }}
+    >
+      <UrlForm setRecipe={setRecipe}/>
+      <Grid item xs={12}>
+        <Typography variant='h5' color='primary'>Selectors</Typography>
+      </Grid>
+      <Input name="domain" label="Domain" disabled required xs={12} md={6} />
+      <Input name="name" label="Name" required xs={12} md={6} />
+      <Input name="description" label="Description" xs={12} md={6} />
+      <Input name="ingredients" label="Ingredients" required xs={12} md={6} />
+      <Input name="instructions" label="Instructions" required xs={12} md={6} />
+      <Input name="prep_time" label="Preparation Time" xs={12} md={6} />
+      <Input name="cook_time" label="Cook Time" xs={12} md={6} />
+      <Input name="notes" label="Notes" xs={12} md={6} />
+      <Button type="submit" disabled={false}>Submit Values to Database</Button>
+    </Form>
+  )
+}
+
+export default function AddDomain() {
+  const [recipe, setRecipe] = useState(null)
+
+  return (
+    <Fragment>
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Title>Add New Domain</Title>
+        <SelectorsForm setRecipe={setRecipe}/>
+      </Paper>
+      {recipe && (
+        <MainBlock recipe={recipe}/>
+      )}
+    </Fragment>
   )
 }
