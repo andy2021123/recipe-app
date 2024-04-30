@@ -120,7 +120,7 @@ function SectionTitle(props) {
 	)
 }
 
-function MainBlock({ recipe: { ingredients, instructions, cook_time, prep_time, notes, keywords } }) {
+export function MainBlock({ recipe: { ingredients, instructions, cook_time, prep_time, notes, keywords } }) {
 	const theme = useTheme()
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'), {
 		defaultMatches: true

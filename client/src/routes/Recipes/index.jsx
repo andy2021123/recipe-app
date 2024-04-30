@@ -132,24 +132,15 @@ function RecipeList({ recipes }) {
   const [searchParams, setSearchParams] = useSearchParams()
 
   useEffect(() => {
-    // update view based on search bar
     const search = searchParams.get('search')
     if (search) {
       setFilteredRecipes(recipes.filter((item) => (
         item.name.toLowerCase().includes(search.toLowerCase())
       )))
+      setPage(1) // reset to first page
     } else {
       setFilteredRecipes(recipes)
     }
-
-    // update from pagination
-    const page = parseInt(searchParams.get('page'))
-    if (page) {
-      setPage(page)
-    } else {
-      setPage(1)
-    }
-
   }, [searchParams])
 
   const theme = useTheme()
@@ -162,18 +153,20 @@ function RecipeList({ recipes }) {
   return (
     <Stack spacing={isMobile ? 1 : 2} alignItems='center' useFlexGap>
       <Grid container spacing={isMobile ? 1 : 2} pt={isMobile ? 1 : 2} display={'flex'}>
-        {filteredRecipes && filteredRecipes.slice((page-1)*itemsPerPage, page*itemsPerPage || -1).map((recipe, index) => (
+        {filteredRecipes && filteredRecipes.slice((page - 1) * itemsPerPage, page * itemsPerPage || -1).map((recipe, index) => (
           <RecipeItem key={recipe.id}>{recipe}</RecipeItem>
         )
         )}
       </Grid>
-      <Pagination 
-        count={Math.ceil(filteredRecipes.length/itemsPerPage)} 
-        variant="outlined" 
-        shape="rounded" 
-        page={page}
-        onChange={(_, value) => setSearchParams({ page: value })}
-      />
+      {filteredRecipes.length > itemsPerPage && (
+        <Pagination
+          count={Math.ceil(filteredRecipes.length / itemsPerPage)}
+          variant="outlined"
+          shape="rounded"
+          page={page}
+          onChange={(_, value) => setPage(value)}
+        />
+      )}
     </Stack>
   )
 }

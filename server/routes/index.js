@@ -1,13 +1,14 @@
 import express from 'express'
 import morgan from 'morgan'
-import recipe from './recipe.js'
 import fs from 'node:fs'
+import recipe from './recipe.js'
+import selectors from './selectors.js'
 
 const router = express.Router()
 
 // api only middleware
 router.use(morgan('dev', {
-  skip: (req, res) => req.route.path === '/:id/image' 
+  // skip: (req, res) => req.route.path === '/:id/image' 
 })) // console logs request information
 
 // routes
@@ -24,6 +25,8 @@ router.get('/image', async (req, res) => {
 })
 
 router.use('/recipe', recipe) // can split into separate files for organization
+
+router.use('/selectors', selectors)
 
 router.get('/*', async (req, res) => {
   res.sendStatus(404)

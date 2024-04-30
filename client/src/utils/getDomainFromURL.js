@@ -12,3 +12,5 @@ export default function getDomainFromURL(inputUrl) {
     return null
   }
 }
+
+// NOTE: IDENTICAL FUNCTION TO FUNCTION USED IN BACKEND

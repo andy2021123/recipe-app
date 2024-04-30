@@ -46,6 +46,7 @@ function MobileToolbar() {
           <List disablePadding>
             <ListItem onClick={toggleDrawer(false)} to="/" component={Link}>Home</ListItem>
             <ListItem onClick={toggleDrawer(false)} to="/add-recipe" component={Link}>Add Recipe</ListItem>
+            <ListItem onClick={toggleDrawer(false)} to="/add-domain" component={Link}>Add Domain</ListItem>
             <ListItem onClick={toggleDrawer(false)} to="/recipes" component={Link}>All Recipes</ListItem>
           </List>
         </Box>
@@ -58,7 +59,7 @@ function MobileToolbar() {
 }
 
 function DesktopToolbar() {
-  const routeMatch = useRouteMatch(["/", "/add-recipe", "/recipes"])
+  const routeMatch = useRouteMatch(["/", "/add-recipe", "/add-domain", "/recipes"])
   const currentTab = routeMatch?.pattern?.path || "/recipes"
 
   return (
@@ -68,6 +69,7 @@ function DesktopToolbar() {
       <Tabs value={currentTab} textColor='inherit'>
         <Tab label="Home" value="/" to="/" component={Link} />
         <Tab label="Add Recipe" value="/add-recipe" to="/add-recipe" component={Link} />
+        <Tab label="Add Domain" value="/add-domain" to="/add-domain" component={Link} />
         <Tab label="All Recipes" value="/recipes" to="/recipes" component={Link} />
       </Tabs>
     </Toolbar>
