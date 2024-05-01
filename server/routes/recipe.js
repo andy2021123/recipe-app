@@ -1,5 +1,5 @@
 import express from 'express'
-import { addRecipe, deleteRecipe, getCategoryRecipes, getRecipe, getRecipes } from '../database/recipe.js'
+import { addRecipe, deleteRecipe, getCategoryRecipes, getLatestRecipes, getRecipe, getRecipes } from '../database/recipe.js'
 import fs from 'node:fs'
 import multer from 'multer'
 import { scrapeWebsite } from '../utils/scraper.js'
@@ -9,8 +9,15 @@ const router = express.Router()
 
 // routes
 router.get('/list', async (req, res) => {
-  const recipes = await getRecipes()
-  res.send(recipes)
+  const { count } = req.query
+
+  if (parseInt(count)) {
+    const recipes = await getLatestRecipes(count)
+    res.send(recipes)
+  } else {
+    const recipes = await getRecipes()
+    res.send(recipes)
+  }
 })
 
 router.get('/list/:category', async (req, res) => {

@@ -21,7 +21,8 @@ CREATE TABLE public.recipes (
   notes VARCHAR(1000),
   cook_time smallint,
   prep_time smallint,
-  url VARCHAR(1000)
+  url VARCHAR(1000),
+  ts TIMESTAMP NOT NULL DEFAULT (current_timestamp)
 );
 
 CREATE TABLE public.ingredients (

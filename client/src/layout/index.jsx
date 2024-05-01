@@ -46,7 +46,7 @@ function MobileToolbar() {
           <List disablePadding>
             <ListItem onClick={toggleDrawer(false)} to="/" component={Link}>Home</ListItem>
             <ListItem onClick={toggleDrawer(false)} to="/add-recipe" component={Link}>Add Recipe</ListItem>
-            <ListItem onClick={toggleDrawer(false)} to="/add-domain" component={Link}>Add Domain</ListItem>
+            {/* <ListItem onClick={toggleDrawer(false)} to="/add-domain" component={Link}>Add Domain</ListItem> */}
             <ListItem onClick={toggleDrawer(false)} to="/recipes" component={Link}>All Recipes</ListItem>
           </List>
         </Box>
