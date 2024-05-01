@@ -9,6 +9,7 @@ import api from 'hooks/useAxios/api'
 import { useNavigate } from 'react-router-dom'
 import getDomainFromURL from 'utils/getDomainFromURL'
 import { MainBlock } from './Recipe'
+import TitleBlock from 'components/Recipes/TitleBlockContainer'
 
 function UrlForm({ setRecipe }) {
   const { getValues, setValue } = useFormMethods()
@@ -65,7 +66,7 @@ function SelectorsForm({ setRecipe }) {
       {pending && <CircularProgress />}
 
       {/* Test URL */}
-      <UrlForm setRecipe={setRecipe}/>
+      <UrlForm setRecipe={setRecipe} />
 
       {/* Selectors */}
       <Grid item xs={12}>
@@ -97,16 +98,10 @@ export default function AddDomain() {
       </Paper>
       {recipe && (
         <Fragment>
-          <Paper
-            sx={{
-              bgcolor: theme.palette.secondary.light,
-              color: theme.palette.common.white,
-              p: 2
-            }}
-          >
+          <TitleBlock>
             <Typography variant='h4' fontWeight='bold'>{recipe.name}</Typography>
             <Typography>{recipe.description}</Typography>
-          </Paper>
+          </TitleBlock>
           <MainBlock recipe={recipe} />
         </Fragment>
       )}

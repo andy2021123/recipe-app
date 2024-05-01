@@ -1,14 +1,14 @@
-import { Box, Paper, Grid, useTheme, Skeleton, CardActionArea, useMediaQuery, Link, Divider, Stack, Pagination } from '@mui/material'
+import { Box, Paper, Grid, useTheme, Skeleton, CardActionArea, useMediaQuery, Link, Divider, Stack, Pagination, Container } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import useAxios, { useAxiosImage } from 'hooks/useAxios'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
+import useAxios from 'hooks/useAxios'
 import Search from 'components/Search'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import categories from './categories'
 import { capitalCase } from 'utils/stringFormat'
+import RecipeItem from 'components/Recipes/RecipeItem'
+import TitleBlockContainer from 'components/Recipes/TitleBlockContainer'
+import NoPage from 'routes/NoPage'
 
 function TitleBlock() {
   const theme = useTheme()
@@ -19,13 +19,7 @@ function TitleBlock() {
   }
 
   return (
-    <Paper
-      sx={{
-        bgcolor: theme.palette.secondary.light,
-        color: theme.palette.common.white,
-        p: 2
-      }}
-    >
+    <TitleBlockContainer>
       <Typography variant='h3' fontWeight='bold' sx={{ pb: 1 }}>All Recipes</Typography>
       <Search onChange={handleChange} />
       <Box sx={{
@@ -42,7 +36,7 @@ function TitleBlock() {
         <Divider sx={{ mx: 1 }} orientation="vertical" flexItem color={theme.palette.common.white} />
         <Link href='/recipes/desserts' color='inherit'>Desserts</Link>
       </Box>
-    </Paper>
+    </TitleBlockContainer>
   )
 }
 
@@ -50,13 +44,7 @@ function CategoryTitleBlock({ category: { name, description } }) {
   const theme = useTheme()
 
   return (
-    <Paper
-      sx={{
-        bgcolor: theme.palette.secondary.light,
-        color: theme.palette.common.white,
-        p: 2
-      }}
-    >
+    <TitleBlockContainer>
       <Box sx={{
         display: 'flex',
         alignItems: 'center',
@@ -70,58 +58,7 @@ function CategoryTitleBlock({ category: { name, description } }) {
       </Box>
       <Typography variant='h3' fontWeight='bold' sx={{ py: 1 }}>{name}</Typography>
       <Typography>{description}</Typography>
-    </Paper>
-  )
-}
-
-function RecipeItem({ children: { id, name, category } }) {
-  const { image, loading } = useAxiosImage(`/recipe/${id}/image`)
-  const navigate = useNavigate()
-
-  const theme = useTheme()
-
-  const openRecipe = () => {
-    navigate(`/recipe/${id}`)
-  }
-
-  return (
-    <Grid item xs={6} sm={4} md={3}>
-      <Card sx={{
-        [theme.breakpoints.only('md')]: {
-          maxWidth: '24vw'
-        },
-        [theme.breakpoints.only('sm')]: {
-          maxWidth: '32vw'
-        },
-        [theme.breakpoints.only('xs')]: {
-          maxWidth: '48vw'
-        }
-      }}>
-        <CardActionArea onClick={openRecipe}>
-          {image ? (
-            <CardMedia
-              component="img"
-              sx={{ width: 'inherit' }}
-              src={image}
-            />
-          ) : loading ? (
-            <Skeleton variant="rectangular" width="100%">
-              <div style={{ paddingTop: '100%' }} />
-            </Skeleton>
-          ) : (
-            <Skeleton animation={false} variant="rectangular" width="100%">
-              <div style={{ paddingTop: '100%' }} />
-            </Skeleton>
-          )}
-          <CardContent
-            sx={{ height: 120 }}
-          >
-            <Typography gutterBottom variant="h6" component="div" style={{ lineHeight: '1.2em', maxHeight: '2.4em', overflow: 'hidden' }}>{name}</Typography>
-            <Typography paragraph color="text.secondary" noWrap>{category}</Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    </Grid>
+    </TitleBlockContainer>
   )
 }
 
@@ -188,14 +125,18 @@ export function CategorizedRecipes() {
   const { category } = useParams()
   const category_object = categories.find(item => item.name.toLowerCase() === category)
 
-  const { data, loading, error } = useAxios(`/recipe/list/${capitalCase(category)}`, 'get')
+  if (category_object) {
+    const { data, loading, error } = useAxios(`/recipe/list/${capitalCase(category)}`, 'get')
 
-  return (
-    <Box>
-      <CategoryTitleBlock category={category_object} />
-      {loading && <Typography>Loading...</Typography>}
-      {error && <Typography>{error}</Typography>}
-      {data && <RecipeList recipes={data} />}
-    </Box>
-  )
+    return (
+      <Box>
+        <CategoryTitleBlock category={category_object} />
+        {loading && <Typography>Loading...</Typography>}
+        {error && <Typography>{error}</Typography>}
+        {data && <RecipeList recipes={data} />}
+      </Box>
+    )
+  } else {
+    return <NoPage />
+  }
 }

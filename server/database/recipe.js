@@ -1,13 +1,22 @@
 import pool from "./index.js"
 import format from 'pg-format'
 import generateNameUrl from '../utils/generateNameUrl.js'
-import { saveImage } from "../utils/image.js";
 
 export async function getRecipes() {
   const { rows } = await pool.query(`
     SELECT name_url AS id, name, category, description
     FROM recipes
   `);
+  return rows
+}
+
+export async function getLatestRecipes(count) {
+  const { rows } = await pool.query(`
+    SELECT name_url AS id, name, category, description
+    FROM recipes 
+    ORDER BY ts DESC
+    LIMIT $1
+  `, [count]);
   return rows
 }
 
@@ -112,9 +121,8 @@ export async function addRecipe(recipe) {
   // convert keyword list into a comma separated string
   recipe.keywords = recipe.keywords.join(', ')
 
-  // save main image details
+  // add the recipe to the database
   const { id, name_url } = await addRecipeDetails(recipe)
-
   await addIngredients(id, recipe)
   await addInstructions(id, recipe)
 
