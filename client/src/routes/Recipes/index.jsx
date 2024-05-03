@@ -66,13 +66,13 @@ function RecipeList({ recipes }) {
   const [filteredRecipes, setFilteredRecipes] = useState(recipes)
   const [page, setPage] = useState(1)
 
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
     const search = searchParams.get('search')
     if (search) {
       setFilteredRecipes(recipes.filter((item) => (
-        item.name.toLowerCase().includes(search.toLowerCase())
+        item.name.toLowerCase().includes(search.toLowerCase()) || item.category.toLowerCase().includes(search.toLowerCase())
       )))
       setPage(1) // reset to first page
     } else {
@@ -81,15 +81,12 @@ function RecipeList({ recipes }) {
   }, [searchParams])
 
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'), {
-    defaultMatches: true
-  })
 
   const itemsPerPage = 12
 
   return (
-    <Stack spacing={isMobile ? 1 : 2} alignItems='center' useFlexGap>
-      <Grid container spacing={isMobile ? 1 : 2} pt={isMobile ? 1 : 2} display={'flex'}>
+    <Stack spacing={theme.getSpacing()} alignItems='center' useFlexGap>
+      <Grid container spacing={theme.getSpacing()} pt={theme.getSpacing()} display={'flex'}>
         {filteredRecipes && filteredRecipes.slice((page - 1) * itemsPerPage, page * itemsPerPage || -1).map((recipe, index) => (
           <RecipeItem key={recipe.id}>{recipe}</RecipeItem>
         )

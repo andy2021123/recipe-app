@@ -1,8 +1,12 @@
 import express from 'express'
-import { addRecipe, deleteRecipe, getCategoryRecipes, getLatestRecipes, getRecipe, getRecipes } from '../database/recipe.js'
 import fs from 'node:fs'
 import multer from 'multer'
 import { scrapeWebsite } from '../utils/scraper.js'
+import Recipe from '../database/recipe.js'
+
+// not sure if this is a good practice
+const { deleteRecipe, getCategoryRecipes, getLatestRecipes, getRecipe, getRecipes } = Recipe
+
 const upload = multer({ dest: 'images/' })
 
 const router = express.Router()
@@ -51,12 +55,26 @@ router.delete('/:id', async (req, res) => {
   res.sendStatus(202)
 })
 
-// adds recipe to database and returns the name_url (id) of the recipe
-router.post('/', async (req, res) => {
-  const { body: recipe } = req
+// edit recipe
+router.post('/:id', async (req, res) => {
+  const { body, params: { id } } = req
+  const recipe = new Recipe({ name_url: id, ...body })
+  
   try {
-    const id = await addRecipe(recipe)
-    res.send(id)
+    await recipe.updateDatabase()
+    res.sendStatus(201)
+  } catch {
+    res.sendStatus(500)
+  }
+})
+
+// add recipe
+router.post('/', async ({ body }, res) => {
+  const recipe = new Recipe(body)
+
+  try {
+    const id = await recipe.addToDatabase()
+    res.status(201).send(id)
   } catch {
     res.sendStatus(500)
   }

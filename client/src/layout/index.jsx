@@ -2,7 +2,7 @@ import {
   Outlet,
   Link
 } from "react-router-dom"
-import { Drawer, List, ListItem, useMediaQuery, useTheme } from '@mui/material'
+import { Divider, Drawer, Menu, MenuItem, useMediaQuery, useTheme } from '@mui/material'
 import { Box, Container } from '@mui/material'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
@@ -15,6 +15,7 @@ import AppLogo from 'assets/AppLogo'
 import useRouteMatch from 'hooks/useRouteMatch'
 import { Fragment, useState } from "react"
 import CloseIcon from '@mui/icons-material/Close'
+
 
 function MobileToolbar() {
   const [open, setOpen] = useState(false)
@@ -36,19 +37,21 @@ function MobileToolbar() {
         <MenuIcon />
       </IconButton>
       <Drawer open={open} anchor="top" onClose={toggleDrawer(false)}>
-        <Box sx={{ width: 'auto', p: 3 }} role="presentation">
-          <IconButton
-            onClick={toggleDrawer(false)}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <List disablePadding>
-            <ListItem onClick={toggleDrawer(false)} to="/" component={Link}>Home</ListItem>
-            <ListItem onClick={toggleDrawer(false)} to="/add-recipe" component={Link}>Add Recipe</ListItem>
-            {/* <ListItem onClick={toggleDrawer(false)} to="/add-domain" component={Link}>Add Domain</ListItem> */}
-            <ListItem onClick={toggleDrawer(false)} to="/recipes" component={Link}>All Recipes</ListItem>
-          </List>
+        <Box>
+          <Toolbar disableGutters sx={{ px: 2 }}>
+            <Typography variant="h5" color="primary">Pages</Typography>
+            <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
+            <IconButton onClick={toggleDrawer(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Toolbar>
+          <Box sx={{ px: 2, pb: 2 }}>
+            <MenuItem onClick={toggleDrawer(false)} to="/" component={Link}>Home</MenuItem>
+            <Divider />
+            <MenuItem onClick={toggleDrawer(false)} to="/add-recipe" component={Link}>Add Recipe</MenuItem>
+            <Divider />
+            <MenuItem onClick={toggleDrawer(false)} to="/recipes" component={Link}>All Recipes</MenuItem>
+          </Box>
         </Box>
       </Drawer>
       <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
@@ -79,9 +82,6 @@ function DesktopToolbar() {
 
 export default function Layout() {
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'), {
-    defaultMatches: true
-  })
 
   return (
     <Fragment>
@@ -90,7 +90,7 @@ export default function Layout() {
       <Box sx={{ display: 'flex' }}>
         <AppBar componenet="nav">
           <Container disableGutters maxWidth="lg">
-            {isMobile ? <MobileToolbar /> : <DesktopToolbar />}
+            {theme.isMobile() ? <MobileToolbar /> : <DesktopToolbar />}
           </Container>
         </AppBar>
 
@@ -106,8 +106,8 @@ export default function Layout() {
             disableGutters
             maxWidth="lg"
             sx={{
-              p: isMobile ? 1 : 2,
-              pb: isMobile ? 3 : 4
+              p: theme.isMobile() ? 1 : 2,
+              pb: theme.isMobile() ? 3 : 4
             }}
           >
             <Outlet />

@@ -20,12 +20,9 @@ function TitleBlock() {
 
 function RecipeList({ recipes }) {
 	const theme = useTheme()
-	const isMobile = useMediaQuery(theme.breakpoints.down('md'), {
-		defaultMatches: true
-	})
 
 	return (
-		<Grid container spacing={isMobile ? 1 : 2} pt={isMobile ? 1 : 2} display={'flex'}>
+		<Grid container spacing={theme.getSpacing()} pt={theme.getSpacing()} display={'flex'}>
 			{recipes && recipes.map((recipe, index) => (
 				<RecipeItem key={recipe.id} xs={6} sm={6} md={3}>{recipe}</RecipeItem>
 			)

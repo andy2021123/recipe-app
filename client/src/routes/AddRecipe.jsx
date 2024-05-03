@@ -114,8 +114,8 @@ function RecipeForm() {
   const handleSubmit = (data) => {
     setSuccess(false)
     setError(false)
-
     setPending(true)
+    
     api.post('/recipe', data)
       .then((res) => {
         if (imageFile) {
@@ -149,7 +149,7 @@ function RecipeForm() {
   const redirectToRecipe = (id) => {
     setTimeout(() => {
       navigate(`/recipe/${id}`)
-    }, 500)
+    }, 250)
   }
 
   return (
@@ -198,14 +198,6 @@ function RecipeForm() {
         required
       />
       <Input multiline rows={2} name="notes" label="Notes" />
-
-      <Grid item xs={12}>
-        <Typography variant='h5' color='primary'>Nutrition</Typography>
-      </Grid>
-      <Input name="nutrition.calories" label="Calories" xs={12} md={6} />
-      <Input name="nutrition.protein" label="Protein" xs={12} md={6} />
-      <Input name="nutrition.carbs" label="Carbohydrates" xs={12} md={6} />
-      <Input name="nutrition.fat" label="Fat" xs={12} md={6} />
 
       <Button type="submit" disabled={pending}>Submit</Button>
     </Form>
