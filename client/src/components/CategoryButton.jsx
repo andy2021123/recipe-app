@@ -3,15 +3,10 @@ import { styled } from '@mui/material/styles'
 import ButtonBase from '@mui/material/ButtonBase'
 import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
-import { Card, Container, Paper } from '@mui/material'
+import { Card, CardMedia, Container, Paper } from '@mui/material'
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
   position: 'relative',
-  height: 200,
-  [theme.breakpoints.down('sm')]: {
-    width: '100% !important', // Overrides inline-style
-    height: 200,
-  },
   '&:hover, &.Mui-focusVisible': {
     zIndex: 1,
     '& .MuiImageBackdrop-root': {
@@ -25,16 +20,6 @@ const ImageButton = styled(ButtonBase)(({ theme }) => ({
     },
   },
 }))
-
-const ImageSrc = styled('span')({
-  position: 'absolute',
-  left: 0,
-  right: 0,
-  top: 0,
-  bottom: 0,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center 40%',
-})
 
 const Image = styled('span')(({ theme }) => ({
   position: 'absolute',
@@ -77,11 +62,12 @@ export default function CategoryButton({ name, img, to }) {
         to={to}
         focusRipple
         key={name}
-        style={{
-          width: '100%',
-        }}
       >
-        <ImageSrc style={{ backgroundImage: `url(${img})` }} />
+        <CardMedia
+          component="img"
+          sx={{ width: '100%', height: '100%' }}
+          src={img}
+        />
         <ImageBackdrop className="MuiImageBackdrop-root" />
         <Image>
           <Typography

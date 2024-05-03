@@ -6,6 +6,7 @@ import { AllRecipes, CategorizedRecipes } from "./Recipes"
 import Recipe from "./Recipe"
 import AddRecipe from "./AddRecipe"
 import AddDomain from "./AddDomain"
+import EditRecipe from "./EditRecipe"
 
 const AppRoutes = () => {
   return (
@@ -18,8 +19,9 @@ const AppRoutes = () => {
             <Route element={<CategorizedRecipes/>} path=":category"/>
           </Route>
           <Route element={<AddRecipe/>} path="/add-recipe"/>
-          <Route element={<Recipe/>} path="/recipe/:id"/>
+          <Route element={<EditRecipe/>} path="/edit-recipe/:id"/>
           <Route element={<AddDomain/>} path="/add-domain"/>
+          <Route element={<Recipe/>} path="/recipe/:id"/>
           <Route element={<NoPage/>} path="*" />
         </Route>
       </Routes>

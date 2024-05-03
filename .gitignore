@@ -36,3 +36,4 @@ dist-ssr
 # App-specific
 server/images/*
 !server/images/AppImage.png
+.*

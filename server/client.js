@@ -2,7 +2,7 @@ import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'node:fs'
-import { getRecipeMeta } from './database/recipe.js'
+import Recipe from './database/recipe.js'
 
 const dist = process.env.DIST || '../client/dist'
 const router = express.Router()
@@ -35,7 +35,7 @@ router.get('/recipe/:id', async (req, res) => {
   const domain = `${req.protocol}://${req.header('Host')}`
 
   // get metadata about recipe from database
-  const { name, description } = await getRecipeMeta(id)
+  const { name, description } = await Recipe.getRecipeMeta(id)
 
   const filePath = path.resolve(__dirname, dist, 'index.html')
   fs.readFile(filePath, "utf8", (err, data) => {

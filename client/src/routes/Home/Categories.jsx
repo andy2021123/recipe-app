@@ -1,7 +1,5 @@
 import { Grid, useTheme, useMediaQuery, Box, Divider, Link } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import useAxios from 'hooks/useAxios'
-import RecipeItem from 'components/Recipes/RecipeItem'
 import TitleBlockContainer from 'components/Recipes/TitleBlockContainer'
 import CategoryButton from 'components/CategoryButton'
 
@@ -32,12 +30,9 @@ function TitleBlock() {
 
 function CategoryList() {
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'), {
-    defaultMatches: true
-  })
 
   return (
-    <Grid container spacing={isMobile ? 1 : 2} pt={isMobile ? 1 : 2} display={'flex'}>
+    <Grid container spacing={theme.getSpacing()} pt={theme.getSpacing()} display={'flex'} justifyContent='center'>
       <Grid item xs={6} md={3}>
         <CategoryButton to='/recipes/entrees' img='/entrees.png' name='Entrees' />
       </Grid>

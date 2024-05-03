@@ -4,9 +4,8 @@ import Typography from '@mui/material/Typography'
 import useAxios, { useAxiosImage } from 'hooks/useAxios'
 import { Fragment, useState } from 'react'
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import CloseIcon from '@mui/icons-material/Close'
 import api from 'hooks/useAxios/api'
-
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
@@ -14,29 +13,28 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 
-function AlertDialog({ open, handleClose, onSubmit }) {
+function AlertDialog({ open, onClose, onEdit, onDelete }) {
 	const theme = useTheme()
 
 	return (
 		<Dialog
 			open={open}
-			onClose={handleClose}
+			onClose={onClose}
 			aria-labelledby="alert-dialog-title"
 			aria-describedby="alert-dialog-description"
 		>
 			<DialogTitle id="alert-dialog-title">
-				Delete this Recipe?
+				Recipe Options
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText id="alert-dialog-description">
-					This will delete the recipe permanently. Are you sure you want to do this?
+					Would you like to delete or edit the recipe?
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>
-				<Button sx={{ color: theme.palette.grey[800] }} onClick={handleClose}>Cancel</Button>
-				<Button variant='contained' color='error' onClick={onSubmit} autoFocus>
-					Delete
-				</Button>
+				<Button sx={{ color: theme.palette.grey[800] }} onClick={onClose}>Cancel</Button>
+				<Button variant='contained' color='secondary' onClick={onEdit}>Edit</Button>
+				<Button variant='contained' color='error' onClick={onDelete} autoFocus>Delete</Button>
 			</DialogActions>
 		</Dialog>
 	)
@@ -48,6 +46,10 @@ function TitleBlock({ id, recipe: { name, description, category, url } }) {
 	const [open, setOpen] = useState(false)
 
 	const { image, loading } = useAxiosImage(`/recipe/${id}/image`)
+
+	const editRecipe = () => {
+		navigate(`/edit-recipe/${id}`)
+	}
 
 	const removeRecipe = () => {
 		api.delete(`/recipe/${id}`)
@@ -81,9 +83,9 @@ function TitleBlock({ id, recipe: { name, description, category, url } }) {
 					<Typography pt={1} variant='h3' fontWeight='bold'>
 						{name}
 						<IconButton onClick={() => setOpen(true)}>
-							<CloseIcon sx={{ color: theme.palette.common.white, fontSize: 40 }} />
+							<MoreVertIcon sx={{ color: theme.palette.common.white, fontSize: 40 }} />
 						</IconButton>
-						<AlertDialog open={open} handleClose={() => setOpen(false)} onSubmit={removeRecipe} />
+						<AlertDialog open={open} onClose={() => setOpen(false)} onEdit={editRecipe} onDelete={removeRecipe} />
 					</Typography>
 					<Typography>{description}</Typography>
 					{url && (
@@ -122,12 +124,9 @@ function SectionTitle(props) {
 
 export function MainBlock({ recipe: { ingredients, instructions, cook_time, prep_time, notes, keywords } }) {
 	const theme = useTheme()
-	const isMobile = useMediaQuery(theme.breakpoints.down('sm'), {
-		defaultMatches: true
-	})
 
 	return (
-		<Paper sx={{ p: 2, mt: isMobile ? 1 : 2 }}>
+		<Paper sx={{ p: 2, mt: theme.getSpacing()}}>
 			<Grid container spacing={2} alignItems='center' pb={1} justifyContent='center'>
 				<Grid item xs='auto'>
 					<AccessTimeIcon />
