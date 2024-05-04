@@ -7,7 +7,7 @@ import useAxios from 'hooks/useAxios'
 function TitleBlock() {
   return (
     <TitleBlockContainer>
-      <Typography variant='h4' fontWeight='bold'>Recently Added Recipes</Typography>
+      <Typography variant='h4' fontWeight='bold'>Recently Added</Typography>
       <Typography>
         Check out the delicious new recipes just added to our app! From savory delights to sweet treats, there's something for every palate. Happy cooking!
       </Typography>

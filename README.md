@@ -1,4 +1,4 @@
-# Getting Started with react-express-template
+# Getting Started with Recipe-App
 
 ## Dependencies
 

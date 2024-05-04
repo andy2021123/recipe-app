@@ -108,11 +108,9 @@ function RecipeForm() {
   const navigate = useNavigate()
   const [imageFile, setImageFile] = useState(null)
   const [pending, setPending] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
 
   const handleSubmit = (data) => {
-    setSuccess(false)
     setError(false)
     setPending(true)
     
@@ -121,7 +119,6 @@ function RecipeForm() {
         if (imageFile) {
           submitImage(res.data)
         } else {
-          setSuccess(true)
           redirectToRecipe(res.data)
         }
       })
@@ -135,21 +132,13 @@ function RecipeForm() {
         'Content-Type': 'multipart/form-data;',
       }
     })
-      .then(() => {
-        setSuccess(true)
-        setPending(false)
-        redirectToRecipe(id)
-      })
+      .then(() => redirectToRecipe(id))
       .catch(() => setError({ message: 'image was not successfully uploaded, but data was' }))
-      .finally(() => {
-        setPending(false)
-      })
+      .finally(() => setPending(false))
   }
 
   const redirectToRecipe = (id) => {
-    setTimeout(() => {
-      navigate(`/recipe/${id}`)
-    }, 250)
+    navigate(`/recipe/${id}`)
   }
 
   return (
@@ -158,11 +147,17 @@ function RecipeForm() {
       onSubmit={handleSubmit}
       defaultValues={{ ingredients: [""], instructions: [""] }}
     >
-      {success && <Alert severity="success">Data Successfully Submitted</Alert>}
+      {/* Flash Messages */}
       {error && <Alert severity="error">{error.message}</Alert>}
       {pending && <CircularProgress />}
+
+      {/* URL Autofill */}
       <UrlForm setError={setError} />
+
+      {/* Image Input */}
       <ImageInput onChange={setImageFile} resizeWidth={600} />
+
+      {/* Description */}
       <Grid item xs={12}>
         <Typography variant='h5' color='primary'>Description</Typography>
       </Grid>
@@ -178,6 +173,7 @@ function RecipeForm() {
         xs={12}
       />
 
+      {/* Recipe Specifics */}
       <Grid item xs={12}>
         <Typography variant='h5' color='primary'>Recipe</Typography>
       </Grid>

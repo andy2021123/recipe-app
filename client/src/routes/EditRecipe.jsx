@@ -13,7 +13,6 @@ import useAxios from 'hooks/useAxios'
 function RecipeForm({ name_url: id, keywords, ...rest }) {
   const navigate = useNavigate()
   const [pending, setPending] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
 
   const handleSubmit = (data) => {
@@ -21,13 +20,7 @@ function RecipeForm({ name_url: id, keywords, ...rest }) {
     setPending(true)
 
     api.post(`/recipe/${id}`, data)
-      .then(() => {
-        setSuccess(true)
-        setPending(false)
-        setTimeout(() => {
-          navigate(`/recipe/${id}`)
-        }, 250)
-      })
+      .then(() => navigate(`/recipe/${id}`))
       .catch(() => setError({ message: 'no data was successfully uploaded' }))
       .finally(() => setPending(false))
   }
@@ -38,10 +31,11 @@ function RecipeForm({ name_url: id, keywords, ...rest }) {
       onSubmit={handleSubmit}
       defaultValues={{ keywords: keywords && keywords.split(', ') || null, ...rest}}
     >
-      {success && <Alert severity="success">Data Successfully Submitted</Alert>}
+      {/* Flash Messages */}
       {error && <Alert severity="error">{error.message}</Alert>}
       {pending && <CircularProgress />}
 
+      {/* Description */}
       <Input name="name" label="Name" required disabled xs={12} md={6} />
       <Select
         options={["Entrees", "Sides", "Drinks", "Desserts"]}
@@ -54,6 +48,7 @@ function RecipeForm({ name_url: id, keywords, ...rest }) {
         xs={12}
       />
 
+      {/* Recipe Specifics */}
       <Grid item xs={12}>
         <Typography variant='h5' color='primary'>Recipe</Typography>
       </Grid>

@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { Box, Divider, Grid, IconButton, Link, List, ListItem, Paper, Skeleton, useMediaQuery, useTheme } from '@mui/material'
+import { Box, Divider, Grid, IconButton, Link, List, ListItem, Paper, Skeleton, Stack, useMediaQuery, useTheme } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import useAxios, { useAxiosImage } from 'hooks/useAxios'
 import { Fragment, useState } from 'react'
@@ -79,13 +79,14 @@ function TitleBlock({ id, recipe: { name, description, category, url } }) {
 						<Link href='/recipes' color='inherit'>All Recipes</Link>
 						<Divider sx={{ mx: 1 }} orientation="vertical" flexItem color={theme.palette.common.white} />
 						<Link href={`/recipes/${category.toLowerCase()}`} color='inherit'>{category}</Link>
+						<Divider sx={{ mx: 1 }} orientation="vertical" flexItem color={theme.palette.common.white} />
+						<IconButton onClick={() => setOpen(true)} size='small'>
+							<MoreVertIcon sx={{ color: theme.palette.common.white }} />
+						</IconButton>
+						<AlertDialog open={open} onClose={() => setOpen(false)} onEdit={editRecipe} onDelete={removeRecipe} />
 					</Box>
 					<Typography pt={1} variant='h3' fontWeight='bold'>
 						{name}
-						<IconButton onClick={() => setOpen(true)}>
-							<MoreVertIcon sx={{ color: theme.palette.common.white, fontSize: 40 }} />
-						</IconButton>
-						<AlertDialog open={open} onClose={() => setOpen(false)} onEdit={editRecipe} onDelete={removeRecipe} />
 					</Typography>
 					<Typography>{description}</Typography>
 					{url && (
@@ -122,24 +123,51 @@ function SectionTitle(props) {
 	)
 }
 
+function RecipeTime({ cook_time, prep_time }) {
+	const theme = useTheme()
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'), { defaultMatches: true })
+
+	return (
+		<Grid container spacing={2} alignItems='center' pb={1} justifyContent='center'>
+			<Grid item xs='auto'>
+				<AccessTimeIcon />
+			</Grid>
+			{isMobile ? (
+				<Grid item xs display='flex'>
+					<Stack>
+						<Typography gutterBottom>Prep Time:</Typography>
+						<Typography gutterBottom>{prep_time ? `${prep_time} minutes` : 'N/A'}</Typography>
+					</Stack>
+					<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
+					<Stack>
+						<Typography gutterBottom>Cook Time:</Typography>
+						<Typography gutterBottom>{cook_time ? `${cook_time} minutes` : 'N/A'}</Typography>
+					</Stack>
+					<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
+					<Stack>
+						<Typography gutterBottom>Total Time:</Typography>
+						<Typography gutterBottom>{cook_time || prep_time ? `${cook_time + prep_time} minutes` : 'N/A'}</Typography>
+					</Stack>
+				</Grid>
+			) : (
+				<Grid item xs display='flex'>
+					<Typography gutterBottom>Prep Time: {prep_time ? `${prep_time} minutes` : 'N/A'}</Typography>
+					<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
+					<Typography gutterBottom>Cook Time: {cook_time ? `${cook_time} minutes` : 'N/A'}</Typography>
+					<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
+					<Typography gutterBottom>Total Time: {cook_time || prep_time ? `${cook_time + prep_time} minutes` : 'N/A'} </Typography>
+				</Grid>
+			)}
+		</Grid>
+	)
+}
+
 export function MainBlock({ recipe: { ingredients, instructions, cook_time, prep_time, notes, keywords } }) {
 	const theme = useTheme()
 
 	return (
-		<Paper sx={{ p: 2, mt: theme.getSpacing()}}>
-			<Grid container spacing={2} alignItems='center' pb={1} justifyContent='center'>
-				<Grid item xs='auto'>
-					<AccessTimeIcon />
-				</Grid>
-				<Grid item xs display='flex'>
-					<Typography gutterBottom>Cook Time: {cook_time ? `${cook_time} minutes` : 'N/A'}</Typography>
-					<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-					<Typography gutterBottom>Prep Time: {prep_time ? `${prep_time} minutes` : 'N/A'}</Typography>
-					<Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-					<Typography gutterBottom>Total Time: {cook_time && prep_time ? `${cook_time + prep_time} minutes` : 'N/A'} </Typography>
-				</Grid>
-			</Grid>
-
+		<Paper sx={{ p: 2, mt: theme.getSpacing() }}>
+			<RecipeTime cook_time={cook_time} prep_time={prep_time} />
 
 			<Divider />
 

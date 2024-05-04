@@ -39,7 +39,7 @@ function MobileToolbar() {
       <Drawer open={open} anchor="top" onClose={toggleDrawer(false)}>
         <Box>
           <Toolbar disableGutters sx={{ px: 2 }}>
-            <Typography variant="h5" color="primary">Pages</Typography>
+            <Typography variant="h4" color="primary">Pages</Typography>
             <Typography variant="h4" component="div" sx={{ flexGrow: 1 }} />
             <IconButton onClick={toggleDrawer(false)}>
               <CloseIcon />
