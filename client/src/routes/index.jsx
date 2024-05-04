@@ -8,7 +8,7 @@ import AddRecipe from "./AddRecipe"
 import AddDomain from "./AddDomain"
 import EditRecipe from "./EditRecipe"
 
-const AppRoutes = () => {
+export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
@@ -28,5 +28,3 @@ const AppRoutes = () => {
     </BrowserRouter>
   )
 }
-
-export default AppRoutes

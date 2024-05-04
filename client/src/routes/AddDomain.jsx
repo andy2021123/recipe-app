@@ -32,7 +32,6 @@ function UrlForm({ setRecipe }) {
 }
 
 function SelectorsForm({ setRecipe }) {
-  const navigate = useNavigate()
   const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
@@ -43,6 +42,7 @@ function SelectorsForm({ setRecipe }) {
     setPending(true)
 
     api.post('/selectors', data)
+      .then(() => setSuccess(true))
       .catch(() => setError({ message: 'no data was successfully uploaded' }))
       .finally(() => setPending(false))
   }
