@@ -7,7 +7,7 @@ import { Alert, Box, CircularProgress, Grid, Modal, Paper, Typography } from '@m
 import { Form, Input, DynamicFields, Button, Select, useFormMethods } from 'components/Form'
 import Title from 'components/Title'
 import api from 'hooks/useAxios/api'
-import ImageCropper from 'features/ImageCropper'
+import ImageCropper from 'components/ImageCropper'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 
