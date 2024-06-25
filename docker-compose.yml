@@ -39,6 +39,7 @@ services:
     image: postgres:16-alpine
     restart: always
     environment:
+      TZ: ${TIMEZONE:-America/New_York}
       POSTGRES_USER: ${PG_USER}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DATABASE}
@@ -72,6 +73,7 @@ services:
     image: postgres:16-alpine
     restart: always
     environment:
+      TZ: ${TIMEZONE:-America/New_York}
       POSTGRES_USER: ${PG_USER}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DATABASE}
