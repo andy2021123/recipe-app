@@ -9,7 +9,7 @@ PG_DATABASE ?= database
 
 environment := development
 
-.PHONY: up down logs build deploy dump psql
+.PHONY: up down logs build deploy dump psql setup
 
 up:
 	docker compose up development-client -d
@@ -39,3 +39,7 @@ pgadmin:
 	docker compose up pgadmin -d
 	@echo pgAdmin is running.
 	@echo     Local: http://localhost:8000
+
+setup:
+	@chmod +x .setup/setup.sh
+	@./.setup/setup.sh
