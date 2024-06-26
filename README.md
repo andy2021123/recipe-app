@@ -18,7 +18,7 @@ sudo apt install make
 
 ## Environment Variables
 
-Copy the environment variables example file with `cp .env.example .env`. Fill with necessary environment variables such as postgres information, prescribed ports, api variables, etc.
+Run `make setup` to interactively set up the environment variables.
 
 ## Running the Application
 
