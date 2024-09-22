@@ -1,5 +1,7 @@
-include .env
-export
+ifneq ($(wildcard .env),)
+	include .env
+	export
+endif
 
 CLIENT_PORT ?= 3000
 SERVER_PORT ?= 5000

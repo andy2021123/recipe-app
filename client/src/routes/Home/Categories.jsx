@@ -10,7 +10,7 @@ function TitleBlock() {
     <TitleBlockContainer>
       <Typography variant='h3' fontWeight='bold'>Home</Typography>
       <Typography>
-        Twizz's Cookbook is your go-to digital kitchen companion, offering a diverse range of global recipes for all occasions. Expertly curated dishes cater to every taste and skill level, ensuring a seamless cooking experience. Join the community, share recipes, and start your flavorful journey today!
+        {import.meta.env.VITE_APP_TITLE} is your go-to digital kitchen companion, offering a diverse range of global recipes for all occasions. Expertly curated dishes cater to every taste and skill level, ensuring a seamless cooking experience. Join the community, share recipes, and start your flavorful journey today!
       </Typography>
       <Box sx={{
         pt: 1,

@@ -20,9 +20,9 @@ export default function AppLogo({ isMobile }) {
         </svg>
       </SvgIcon>
       {isMobile ? (
-        <Typography variant='h6' color={theme.palette.grey[100]} fontWeight='bold' pl={1}>TWIZZ'S COOKBOOK</Typography>
+        <Typography variant='h6' color={theme.palette.grey[100]} fontWeight='bold' pl={1}>{import.meta.env.VITE_APP_TITLE}</Typography>
       ) : (
-        <Typography variant='h4' color={theme.palette.grey[100]} fontWeight='bold' pl={1}>TWIZZ'S COOKBOOK</Typography>
+        <Typography variant='h4' color={theme.palette.grey[100]} fontWeight='bold' pl={1}>{import.meta.env.VITE_APP_TITLE}</Typography>
       )}
     </Fragment>
   )

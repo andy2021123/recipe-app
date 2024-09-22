@@ -12,6 +12,7 @@ services:
     restart: always
     environment:
       REACT_APP_PROXY: http://development-server:5000
+      VITE_APP_TITLE: ${VITE_APP_TITLE:-COOKBOOK}
     depends_on:
       - development-server
 
@@ -53,6 +54,8 @@ services:
     container_name: production
     build:
       context: .
+      args:
+        VITE_APP_TITLE: ${VITE_APP_TITLE:-COOKBOOK}
     ports:
       - "${CLIENT_PORT:-3000}:3000"
     volumes:

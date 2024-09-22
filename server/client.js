@@ -19,8 +19,9 @@ router.get('/', (req, res) => {
       console.log(err)
     } else {
       data = data
-      .replace(/__TITLE__/g, "Twizz Stew")
-      .replace(/__DESCRIPTION__/g, "Twizz Stew is a recipe app without ads!")
+      .replace(/__TITLE__/g, process.env.VITE_APP_TITLE)
+      .replace(/__DESCRIPTION__/g, `${process.env.VITE_APP_TITLE} is a recipe app without ads!`)
+      .replace(/__URL__/g, domain)
       .replace(/__IMAGE__/g, `${domain}/api/image`)
 
       res.send(data)
@@ -45,7 +46,8 @@ router.get('/recipe/:id', async (req, res) => {
       data = data
         .replace(/__TITLE__/g, name)
         .replace(/__DESCRIPTION__/g, description)
-        .replace(/__IMAGE__/g, `${domain}/api/recipe/${id}/image`)
+      .replace(/__URL__/g, domain)
+      .replace(/__IMAGE__/g, `${domain}/api/recipe/${id}/image`)
 
       res.send(data)
     }
@@ -61,9 +63,10 @@ router.get('/*', (req, res) => {
       console.log(err)
     } else {
       data = data
-        .replace(/__TITLE__/g, "Twizz Stew")
-        .replace(/__DESCRIPTION__/g, "Twizz Stew is a recipe app without ads!")
-        .replace(/__IMAGE__/g, `${domain}/api/image`)
+      .replace(/__TITLE__/g, process.env.VITE_APP_TITLE)
+      .replace(/__DESCRIPTION__/g, `${process.env.VITE_APP_TITLE} is a recipe app without ads!`)
+      .replace(/__URL__/g, domain)
+      .replace(/__IMAGE__/g, `${domain}/api/image`)
 
       res.send(data)
     }
